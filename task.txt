@@ -1,2 +1,0 @@
-1. Change the name to tarug
-2. Use the polling event loop instead of thread

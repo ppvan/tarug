@@ -6,7 +6,7 @@
     src="data/icons/hicolor/scalable/apps/io.github.ppvan.tarug.svg" alt="tarug"
     width="128"
     height="128"/><br/>
-    PSequel
+    Tarug
 </h1>
 
 <p align="center">
@@ -26,7 +26,7 @@
 </p>
 
 
-Small tool for quick sql query, specialized in PostgresSQL. Written in Vala for GNOME desktop in the hope to be useful.
+Small tool for quick sql query, specialized in PostgresSQL.
 
 > **This project is not a part of or affiliated with PostgreSQL.**
 
@@ -55,55 +55,12 @@ PSequel can be built with GNOME Builder >= 3.38. Clone this repo and click run b
 
 > (Warning: required to rebuild postgres, will take a little bit of time)
 
-### Via Meson
-> You really don't want to do this unless you want to contribute to this project.
-
-*Fedora 40 instuctions*
-
-```sh
-sudo dnf install vala gtk4-devel libadwaita-devel json-glib-devel gtksourceview5-devel libpq-devel sqlite-devel libcsv-devel
-```
-
-*Install - pgquery-vala*
-
-```
-git clone --recurse-submodules https://github.com/ppvan/pg_query_vala.git
-
-meson setup --prefix=/usr build/ && ninja -C build install
-```
-
-*Other distro*
-
-> TBU
-
-
-Tarug can be built directly via Meson:
-```bash
-git clone https://github.com/ppvan/tarug
-cd tarug
-meson build
-cd build
-meson compile
-```
-Next, it can be installed by `meson install`.
-
-# Dependencies
-If you use GNOME Builder or Flatpak, dependencies will be installed automatically. If you use pure Meson, dependencies will be:
-- vala >= 0.56
-- gtk >= 4.16
-- gtksourceview >= 5.0
-- gio >= 2.80
-- json-glib >= 1.6
-- libadwaita >= 1.6
-- postgres-libs >= 16.2
-- libcsv >= 3.0
-- pgquery-vala
 
 # Contributions
 Contributions are welcome.
 
 # Credits
 
-- [Tarug](https://tarug.com/) - MacOS postgresql client. This project is inspired by Tarug.
+- [Psequel](https://psequel.com/) - MacOS postgresql client. This project is inspired by Psequel.
 - [libpg_query](https://github.com/pganalyze/libpg_query) - PostgresSQL parser
 - [libcsv](https://github.com/rgamble/libcsv) - Robust C csv library
