@@ -3,7 +3,7 @@
     <id>me.ppvan.psequel</id>
 
     <name>psequel</name>
-    <summary>A minimal SQL client</summary>
+    <summary>A minimal Postgres SQL client</summary>
 
     <metadata_license>MIT</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>

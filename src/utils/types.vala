@@ -61,7 +61,7 @@ namespace Psequel {
     }
 
     public class Vec<T>: Object {
-        static int DEFAULT_CAPACITY = 16;
+        static int DEFAULT_CAPACITY = 64;
 
         private T[] data;
         private int size;

@@ -78,7 +78,7 @@ namespace Psequel {
                 return;
             }
 
-            yield this.sql_service.update_row (table, fields);
+            //  yield this.sql_service.update_row (table, fields);
         }
 
         // private inline async void

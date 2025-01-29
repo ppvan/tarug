@@ -1,10 +1,7 @@
 namespace Psequel {
 // valalint=skip-file
     [GtkTemplate(ui = "/me/ppvan/psequel/gtk/preferences-window.ui")]
-    public class PreferencesWindow : Adw.PreferencesWindow {
-        // const ActionEntry[] ACTION_ENTRIES = {
-        // { "editor-font", old_choser },
-        // };
+    public class PreferencesWindow : Adw.PreferencesDialog {
 
         private Settings ? settings;
 
@@ -24,8 +21,6 @@ namespace Psequel {
 
             font_label.get_pango_context().set_font_description(desc);
             font_label.label = desc.to_string();
-//
-            // Application.app.add_action_entries (ACTION_ENTRIES, this);
         }
 
         private void setup_binding (){
@@ -51,7 +46,8 @@ namespace Psequel {
 
             var current_font = Pango.FontDescription.from_string(settings.get_string("editor-font"));
 
-            dialog.choose_font.begin(this, current_font, null, (obj, res) => {
+            var window = get_parrent_window (this);
+            dialog.choose_font.begin(window, current_font, null, (obj, res) => {
                 try {
                     Pango.FontDescription val = dialog.choose_font.end(res);
                     font_label.get_pango_context().set_font_description(val);
@@ -63,26 +59,6 @@ namespace Psequel {
             });
         }
 
-        // private void new_choser () {
-        // var dialog = new Gtk.FontDialog () {
-        // modal = true,
-        // title = _("Select Font"),
-        // };
-
-        // var init = new Pango.FontDescription ();
-        // init.set_family ("Roboto Regular");
-        // init.set_size (14);
-
-        // dialog.choose_font.begin (this, init, null, (obj, res) => {
-        // try {
-        // var val = dialog.choose_font.end (res);
-        // font_label.get_pango_context ().set_font_description (val);
-        // font_label.label = val.get_family ();
-        // } catch (Error err) {
-        // debug (err.message);
-        // }
-        // });
-        // }
 
         [GtkChild]
         private unowned Gtk.Label font_label;

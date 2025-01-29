@@ -166,25 +166,9 @@ namespace Psequel {
         }
 
         private void on_about_action (){
-            string[] developers = { "ppvan" };
-
-            var about = new Adw.AboutWindow(){
-                transient_for = this.get_active_window(),
-                application_name = Config.APP_NAME,
-                application_icon = Config.APP_ID,
-                developer_name = "Phạm Văn Phúc",
-                version = Config.VERSION,
-                developers = developers,
-                copyright = "© 2023 ppvan",
-                license_type = Gtk.License.GPL_3_0_ONLY,
-                issue_url = "https://github.com/ppvan/psequel/issues",
-
-                developers = {
-                    "ppvan https://ppvan.me",
-                },
-            };
-
-            about.present();
+            string app_data_resource = "/me/ppvan/psequel/appdata";
+            var about = new Adw.AboutDialog.from_appdata (app_data_resource, Config.VERSION);
+            about.present (this.active_window);
         }
 
         private void on_new_window (){
@@ -194,12 +178,9 @@ namespace Psequel {
 
         private void on_preferences_action (){
             var preference = new PreferencesWindow(){
-                transient_for = this.active_window,
-                modal = true,
-                application = this,
             };
 
-            preference.present();
+            preference.present(this.active_window);
         }
 
         /**

@@ -41,7 +41,6 @@ namespace Psequel {
         private ObservableList<Relation.Row> rows;
         private Gtk.SortListModel sort_model;
         private Gtk.SelectionModel selection_model;
-        private Gtk.GestureClick clickEvent;
 
         public class QueryResults(bool show_loading){
             Object();

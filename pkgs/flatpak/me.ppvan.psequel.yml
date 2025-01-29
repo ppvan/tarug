@@ -2,6 +2,13 @@ app-id: me.ppvan.psequel
 runtime: org.gnome.Platform
 runtime-version: '47'
 sdk: org.gnome.Sdk
+
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.vala
+build-options:
+  append-path: /usr/lib/sdk/vala/bin
+  prepend-ld-library-path: /usr/lib/sdk/vala/lib
+
 command: psequel
 finish-args:
   - --share=network
@@ -9,9 +16,7 @@ finish-args:
   - --socket=fallback-x11
   - --device=dri
   - --socket=wayland
-build-options:
-  append-path: /usr/lib/sdk/vala/bin
-  prepend-ld-library-path: /usr/lib/sdk/vala/lib
+
 cleanup:
   - /include
   - /lib/pkgconfig

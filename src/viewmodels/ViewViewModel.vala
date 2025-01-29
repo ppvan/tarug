@@ -1,3 +1,5 @@
+using Gee;
+
 namespace Psequel {
 /* View here is database view (virtual tables), not UI */
     public class ViewViewModel : BaseViewModel {

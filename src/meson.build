@@ -93,6 +93,7 @@ psequel_deps = [
     dependency('gtk4', version: '>=4.10'),
     dependency('libadwaita-1', version: '>= 1.5'),
     dependency('json-glib-1.0', version: '>= 1.6'),
+    dependency('gee-0.8'),
     dependency('gtksourceview-5', version: '>= 5.0'),
     dependency('libpq', version: '>= 15.3'),
     math_dep,

@@ -1,17 +1,19 @@
 namespace Psequel {
     [GtkTemplate(ui = "/me/ppvan/psequel/gtk/connection-view.ui")]
     public class ConnectionView : Adw.Bin {
+
+        // Data source
         public ConnectionViewModel viewmodel { get; private set; }
-        // public ObservableList<Connection> connections { get; set; }
         public Connection ? selected_connection { get; set; }
 
+        // UI
         BindingGroup bindings;
-
         const ActionEntry[] ACTION_ENTRIES = {
             { "connect", on_connect_connection },
             { "dupplicate", on_dupplicate_connection },
             { "delete", on_remove_connection },
         };
+        private Adw.AlertDialog err_dialog;
 
         public ConnectionView(Application app){
             Object();
@@ -20,7 +22,12 @@ namespace Psequel {
         // Connect event.
         construct {
             setup_paned(paned);
-            viewmodel = autowire<ConnectionViewModel> ();
+            this.viewmodel = autowire<ConnectionViewModel> ();
+
+            this.err_dialog = new Adw.AlertDialog("Connection Failed", null) {
+                default_response = "okay",
+            };
+            this.err_dialog.add_response("okay", "OK");
 
             var action_group = new SimpleActionGroup();
             action_group.add_action_entries(ACTION_ENTRIES, this);
@@ -152,15 +159,15 @@ namespace Psequel {
         }
 
         private void set_up_bindings (){
-            // Save ref so it does not be cleaned
+            // Save ref so it does not be cleaned by GC
             this.bindings = create_form_bind_group();
 
             viewmodel.bind_property("selected-connection", this.bindings, "source", BindingFlags.SYNC_CREATE);
             viewmodel.bind_property("is-connectting", connect_btn, "sensitive", INVERT_BOOLEAN | SYNC_CREATE);
+            viewmodel.bind_property("err-msg", this.err_dialog, "body", SYNC_CREATE);
             viewmodel.notify["current-state"].connect(() => {
                 if (viewmodel.current_state == ConnectionViewModel.State.ERROR) {
-                    var err_dialog = create_dialog("Connection Failed", viewmodel.err_msg);
-                    err_dialog.show();
+                    this.err_dialog.present(this);
                 }
             });
 

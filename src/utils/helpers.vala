@@ -36,10 +36,8 @@ namespace Psequel {
         });
     }
 
-    public Adw.MessageDialog create_dialog (string heading, string body){
-        var app = autowire<Application> ();
-        var window = app.active_window;
-        var dialog = new Adw.MessageDialog(window, heading, body);
+    public Adw.AlertDialog create_dialog (string heading, string? body){
+        var dialog = new Adw.AlertDialog (heading, body);
 
         debug(body);
 
