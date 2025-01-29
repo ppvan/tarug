@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class NavigationService : Object {
         public const string CONNECTION_VIEW = "connection-view";
         public const string QUERY_VIEW = "query-view";

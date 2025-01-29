@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>me.ppvan.psequel</id>
+    <id>io.github.ppvan.tarug</id>
 
-    <name>psequel</name>
+    <name>tarug</name>
     <summary>A minimal Postgres SQL client</summary>
 
     <metadata_license>MIT</metadata_license>
@@ -13,7 +13,7 @@
     </recommends>
 
     <description>
-        <p>Psequel is a modern, yet another Postgres SQL client, build with GTK 4 and Libadwaita</p>
+        <p>tarug is a modern, yet another Postgres SQL client, build with GTK 4 and Libadwaita</p>
         <ul>
             <li>Create connection, import, export connection to database</li>
             <li>View tables, scshema, views, columns, indexes, foreign key</li>
@@ -26,28 +26,36 @@
     </description>
     <content_rating type="oars-1.1" />
     <provides>
-        <binary>psequel</binary>
+        <id>me.ppvan.tarug</id>
     </provides>
-    <url type="homepage">https://github.com/ppvan/psequel</url>
-    <url type="bugtracker">https://github.com/ppvan/psequel/issues</url>
+    <replaces>
+        <id>me.ppvan.tarug</id>
+    </replaces>
+    <url type="homepage">https://github.com/ppvan/tarug</url>
+    <url type="bugtracker">https://github.com/ppvan/tarug/issues</url>
 
     <developer id="io.github.ppvan">
         <name>Phạm Văn Phúc</name>
         <url>https://github.com/ppvan</url>
     </developer>
-    <launchable type="desktop-id">me.ppvan.psequel.desktop</launchable>
+    <launchable type="desktop-id">io.github.ppvan.tarug.desktop</launchable>
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/ppvan/psequel/main/screenshots/screenshot1.png</image>
+            <image>https://raw.githubusercontent.com/ppvan/tarug/main/screenshots/screenshot1.png</image>
+            <caption>Conection screen</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/ppvan/psequel/main/screenshots/screenshot2.png</image>
+            <image>https://raw.githubusercontent.com/ppvan/tarug/main/screenshots/screenshot2.png</image>
+            <caption>Schema structure screen</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/ppvan/psequel/main/screenshots/screenshot3.png</image>
+            <image>https://raw.githubusercontent.com/ppvan/tarug/main/screenshots/screenshot3.png</image>
+            <caption>Table data screen</caption>
+
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/ppvan/psequel/main/screenshots/screenshot4.png</image>
+            <image>https://raw.githubusercontent.com/ppvan/tarug/main/screenshots/screenshot4.png</image>
+            <caption>Query editor</caption>
         </screenshot>
     </screenshots>
 

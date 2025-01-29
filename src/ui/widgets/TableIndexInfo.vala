@@ -1,8 +1,8 @@
 
 
-namespace Psequel {
+namespace Tarug {
 
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/table-index.ui")]
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/table-index.ui")]
     public class TableIndexInfo : Adw.Bin {
 
         public GLib.ListModel indexes { get; set; }

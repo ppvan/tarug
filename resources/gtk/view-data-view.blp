@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template $PsequelViewDataView: Gtk.Box {
+template $TarugViewDataView: Gtk.Box {
   width-request: 900;
   height-request: 600;
   orientation: vertical;
@@ -32,10 +32,10 @@ template $PsequelViewDataView: Gtk.Box {
     }
   }
 
-  $PsequelQueryResults query_results {
-    current-relation: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.current-relation;
-    is-loading: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.is-loading;
-    err-msg: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.err-msg;
+  $TarugQueryResults query_results {
+    current-relation: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.current-relation;
+    is-loading: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.is-loading;
+    err-msg: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.err-msg;
     show-loading: false;
   }
 
@@ -66,7 +66,7 @@ template $PsequelViewDataView: Gtk.Box {
     Separator {}
 
     Label status_label {
-      label: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.row-ranges;
+      label: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.row-ranges;
       hexpand: true;
       halign: start;
     }
@@ -80,7 +80,7 @@ template $PsequelViewDataView: Gtk.Box {
 
       icon-name: "left-large-symbolic";
       tooltip-text: "Last Page";
-      sensitive: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.has-pre-page;
+      sensitive: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.has-pre-page;
       clicked => $pre_page();
     }
 
@@ -91,7 +91,7 @@ template $PsequelViewDataView: Gtk.Box {
 
       icon-name: "right-large-symbolic";
       tooltip-text: "Next Page";
-      sensitive: bind template.viewdata-viewmodel as <$PsequelViewDataViewModel>.has-next-page;
+      sensitive: bind template.viewdata-viewmodel as <$TarugViewDataViewModel>.has-next-page;
       clicked => $next_page();
     }
   }

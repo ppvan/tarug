@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/table-data-view.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/table-data-view.ui")]
     public class TableDataView : Gtk.Box {
         public TableDataViewModel tabledata_viewmodel { get; set; }
 

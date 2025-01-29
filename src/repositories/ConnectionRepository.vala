@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class ConnectionRepository : Object {
         const string table_name = "connections";
 

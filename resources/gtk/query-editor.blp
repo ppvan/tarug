@@ -2,8 +2,8 @@ using Gtk 4.0;
 using Adw 1;
 using GtkSource 5;
 
-template $PsequelQueryEditor: Adw.Bin {
-    selected-query: bind template.query-viewmodel as <$PsequelQueryViewModel>.selected-query;
+template $TarugQueryEditor: Adw.Bin {
+    selected-query: bind template.query-viewmodel as <$TarugQueryViewModel>.selected-query;
 
     Paned paned {
         orientation: vertical;
@@ -87,11 +87,11 @@ template $PsequelQueryEditor: Adw.Bin {
                                     ]
 
                                     model: SingleSelection selection_model {
-                                        model: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.query-history;
+                                        model: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.query-history;
                                     };
 
                                     factory: BuilderListItemFactory {
-                                        resource: "/me/ppvan/psequel/gtk/query-listitem.ui";
+                                        resource: "/io/github/ppvan/tarug/gtk/query-listitem.ui";
                                     };
 
                                     activate => $on_query_history_exec();
@@ -118,7 +118,7 @@ template $PsequelQueryEditor: Adw.Bin {
                     ]
                     tooltip-text: "Export Result";
                     icon-name: "export-symbolic";
-                    visible: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.success;
+                    visible: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.success;
                     clicked => $on_export_csv();
                 }
 
@@ -127,11 +127,11 @@ template $PsequelQueryEditor: Adw.Bin {
                 }
 
                 Spinner spinner {
-                    spinning: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.is-loading;
+                    spinning: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.is-loading;
                 }
 
                 // Label query_time {
-                //     label: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.query-time;
+                //     label: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.query-time;
                 // }
                 Button run_query_btn {
                     styles [
@@ -146,12 +146,12 @@ template $PsequelQueryEditor: Adw.Bin {
 
             Separator {}
 
-            $PsequelQueryResults query_results {
+            $TarugQueryResults query_results {
                 wellcome_message: "Run a query";
                 show_loading: true;
-                current-relation: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.current-relation;
-                is-loading: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.is-loading;
-                err-msg: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.err-msg;
+                current-relation: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.current-relation;
+                is-loading: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.is-loading;
+                err-msg: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.err-msg;
             }
 
             Box {
@@ -171,11 +171,11 @@ template $PsequelQueryEditor: Adw.Bin {
 
                     icon-name: "test-pass-symbolic";
                     pixel-size: 20;
-                    visible: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.success;
+                    visible: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.success;
                 }
 
                 Label row_affect {
-                    label: bind template.query-history-viewmodel as <$PsequelQueryHistoryViewModel>.row-affected;
+                    label: bind template.query-history-viewmodel as <$TarugQueryHistoryViewModel>.row-affected;
                 }
 
                 Label {

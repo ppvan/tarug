@@ -1,7 +1,7 @@
 
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/table-graph.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/table-graph.ui")]
     public class TableGraph : Gtk.Box {
         private TableViewModel viewmodel;
 

@@ -33,7 +33,7 @@ menu primary_menu {
     }
 }
 
-template $PsequelSchemaView: Adw.Bin {
+template $TarugSchemaView: Adw.Bin {
     hexpand: true;
     vexpand: true;
 
@@ -70,7 +70,7 @@ template $PsequelSchemaView: Adw.Bin {
 
                     DropDown dropdown {
                         hexpand: true;
-                        model: bind template.schema-viewmodel as <$PsequelSchemaViewModel>.schemas;
+                        model: bind template.schema-viewmodel as <$TarugSchemaViewModel>.schemas;
                     }
                 }
 
@@ -181,7 +181,7 @@ template $PsequelSchemaView: Adw.Bin {
                                         model: Gtk.SortListModel table_sort_model {
                                             model: FilterListModel table_model {
                                                 incremental: true;
-                                                model: bind template.table-viewmodel as <$PsequelTableViewModel>.tables;
+                                                model: bind template.table-viewmodel as <$TarugTableViewModel>.tables;
 
                                                 filter: StringFilter table_filter {};
                                             };
@@ -193,7 +193,7 @@ template $PsequelSchemaView: Adw.Bin {
                                     activate => $on_tablelist_activate();
 
                                     factory: BuilderListItemFactory {
-                                        resource: "/me/ppvan/psequel/gtk/table-listitem.ui";
+                                        resource: "/io/github/ppvan/tarug/gtk/table-listitem.ui";
                                     };
                                 }
                             }
@@ -285,7 +285,7 @@ template $PsequelSchemaView: Adw.Bin {
                                         model: Gtk.SortListModel view_sort_model {
                                             model: FilterListModel view_model {
                                                 incremental: true;
-                                                model: bind template.view-viewmodel as <$PsequelViewViewModel>.views;
+                                                model: bind template.view-viewmodel as <$TarugViewViewModel>.views;
 
                                                 filter: StringFilter view_filter {};
                                             };
@@ -295,7 +295,7 @@ template $PsequelSchemaView: Adw.Bin {
                                     };
 
                                     factory: BuilderListItemFactory {
-                                        resource: "/me/ppvan/psequel/gtk/view-listitem.ui";
+                                        resource: "/io/github/ppvan/tarug/gtk/view-listitem.ui";
                                     };
                                 }
                             }
@@ -371,7 +371,7 @@ template $PsequelSchemaView: Adw.Bin {
                             menu-model: primary_menu;
 
                             [style-switcher]
-                            $PsequelStyleSwitcher {}
+                            $TarugStyleSwitcher {}
                         };
                     }
                 }
@@ -394,13 +394,13 @@ template $PsequelSchemaView: Adw.Bin {
                             StackPage {
                                 name: "table";
 
-                                child: $PsequelTableStructureView {};
+                                child: $TarugTableStructureView {};
                             }
 
                             StackPage {
                                 name: "view";
 
-                                child: $PsequelViewStructureView {};
+                                child: $TarugViewStructureView {};
                             }
                         };
                     }
@@ -417,13 +417,13 @@ template $PsequelSchemaView: Adw.Bin {
                             StackPage {
                                 name: "table";
 
-                                child: $PsequelTableDataView {};
+                                child: $TarugTableDataView {};
                             }
 
                             StackPage {
                                 name: "view";
 
-                                child: $PsequelViewDataView {};
+                                child: $TarugViewDataView {};
                             }
                         };
                     }
@@ -433,7 +433,7 @@ template $PsequelSchemaView: Adw.Bin {
                         icon-name: "terminal-symbolic";
                         title: "Query";
 
-                        child: $PsequelQueryEditor {};
+                        child: $TarugQueryEditor {};
                     }
                 }
             }

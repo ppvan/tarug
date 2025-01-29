@@ -1,7 +1,7 @@
 using GtkSource;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/query-editor.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/query-editor.ui")]
     public class QueryEditor : Adw.Bin {
         const string LIGHT_TAG = "query-block-light";
         const string DARK_TAG = "query-block-dark";

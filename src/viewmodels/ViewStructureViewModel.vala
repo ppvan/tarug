@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class ViewStructureViewModel : Object {
 
         public View selected_view { get; set; }

@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     const int64 SECOND_TO_MS = 1000;
     const int64 MILISECS_TO_US = 1000;
 

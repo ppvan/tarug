@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $PsequelRestoreDialog: Adw.Dialog {
+template $TarugRestoreDialog: Adw.Dialog {
     follows-content-size: true;
     title: _("Restore database");
     presentation-mode: floating;
@@ -37,7 +37,7 @@ template $PsequelRestoreDialog: Adw.Dialog {
                         Adw.ComboRow database_row {
                             title: _("Database");
                             subtitle: _("Database to restore");
-                            model: bind template.viewmodel as <$PsequelConnectionViewModel>.connections;
+                            model: bind template.viewmodel as <$TarugConnectionViewModel>.connections;
                         }
 
                         Adw.ComboRow format_row {

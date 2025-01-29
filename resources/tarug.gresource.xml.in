@@ -3,7 +3,7 @@
   <gresource prefix="/@PREFIX@">
     <file alias="style.css">gtk/style.css</file>
     <file alias="style-dark.css">gtk/style-dark.css</file>
-    <file alias="appdata" compressed="true" preprocess="xml-stripblanks">./../data/me.ppvan.psequel.metainfo.xml.in</file>
+        <file alias="appdata" compressed="true" preprocess="xml-stripblanks">./../data/io.github.ppvan.tarug.metainfo.xml.in</file>
     <file>migrations/version-0.sql</file>
     <file>migrations/version-1.sql</file>
     @UI_FILES@

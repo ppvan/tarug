@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
 /**
  * Util class to mesure execution time than log it using debug()
  */

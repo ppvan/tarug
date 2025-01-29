@@ -1,5 +1,5 @@
 project(
-    'me.ppvan.psequel',
+    'io.github.ppvan.tarug',
     ['c', 'vala'],
     version: '0.2.0',
     meson_version: '>= 1.2.0',

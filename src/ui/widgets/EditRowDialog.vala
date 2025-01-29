@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/edit-row.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/edit-row.ui")]
     public class EditRowDialog : Adw.Dialog {
         private TableDataViewModel tabledata_viewmodel;
         private Relation.Row current_row;

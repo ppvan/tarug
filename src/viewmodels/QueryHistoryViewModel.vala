@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class QueryHistoryViewModel : BaseViewModel {
         const string AUTO_EXEC_HISTORY = "auto-exec-history";
 
@@ -80,7 +80,7 @@ namespace Psequel {
                 is_loading = false;
 
                 return(true);
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 this.err_msg = err.message;
             }
 

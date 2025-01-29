@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class EventBus : Object {
         public signal void schema_changed (Schema schema);
         public signal void connection_active (Connection connection);

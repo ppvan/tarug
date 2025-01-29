@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class SchemaRepository : Object {
         public SchemaRepository(){
             Object();

@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class Container : Object {
         private HashTable<GLib.Type, Object> dependencies;
         private static Container ? _instance;

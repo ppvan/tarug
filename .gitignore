@@ -12,4 +12,4 @@ subprojects/*
 
 *.flatpak
 *.dot
-me.ppvan.psequel.flatpak
+io.github.ppvan.tarug.flatpak

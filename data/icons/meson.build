@@ -1,4 +1,4 @@
-application_id = 'me.ppvan.psequel'
+application_id = 'io.github.ppvan.tarug'
 
 scalable_dir = join_paths('hicolor', 'scalable', 'apps')
 install_data(

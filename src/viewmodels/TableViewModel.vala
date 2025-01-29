@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class TableViewModel : BaseViewModel {
         public Schema schema { get; set; }
         public ObservableList<Table> tables { get; set; default = new ObservableList<Table> (); }
@@ -38,7 +38,7 @@ namespace Psequel {
             selected_table = tables[index];
         }
 
-        private async void load_tables (Schema schema) throws PsequelError {
+        private async void load_tables (Schema schema) throws tarugError {
             debug("loading tables in %s", schema.name);
             var query = new Query.with_params(TABLE_LIST, { schema.name });
             var relation = yield sql_service.exec_query_params (query);

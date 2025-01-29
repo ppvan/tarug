@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/backup-dialog.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/backup-dialog.ui")]
     public class BackupDialog : Adw.Dialog {
         public static string[] FORMATS = {
             "plain",

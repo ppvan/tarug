@@ -1,7 +1,7 @@
 using Gtk;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/table-row.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/table-row.ui")]
     class TableRow : Gtk.Box {
         public string content { get; set; default = ""; }
         public string icon_name { get; set; default = ""; }

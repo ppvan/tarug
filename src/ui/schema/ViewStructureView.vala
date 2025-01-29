@@ -1,7 +1,7 @@
 using GtkSource;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/view-structure-view.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/view-structure-view.ui")]
     public class ViewStructureView : Gtk.Box {
         public ViewViewModel view_viewmodel { get; set; }
         public ListModel columns { get; private set; }

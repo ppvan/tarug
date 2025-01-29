@@ -6,11 +6,16 @@
         ".flatpak/**": true,
         "_build/**": true
     },
+    "C_Cpp.default.compileCommands": "/home/ppvan/Documents/code/github/tarug/_build/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
+    "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh",
+    "blueprint-gtk.command": "flatpak",
+    "blueprint-gtk.arguments": [
+        "build",
+        ".flatpak/repo/",
+        "/app/bin/blueprint-compiler"
+    ],
     "mesonbuild.configureOnOpen": false,
     "mesonbuild.buildFolder": "_build",
-    "C_Cpp.default.compileCommands": "/home/ppvan/Documents/code/github/psequel/_build/compile_commands.json",
-    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
-    "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh",
-    "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh"
-
+    "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh"
 }

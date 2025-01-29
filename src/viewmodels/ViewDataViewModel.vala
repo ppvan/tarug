@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class ViewDataViewModel : DataViewModel {
         public View ? selected_view { get; set; }
         // public View? current_view {get; set;}
@@ -65,7 +65,7 @@ namespace Psequel {
 
                 is_loading = false;
                 debug("Rows: %d", current_relation.rows);
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 this.err_msg = err.message;
             }
         }

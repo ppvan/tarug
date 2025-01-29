@@ -2,8 +2,8 @@ using Gtk;
 using Adw;
 using GtkSource;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/where-entry.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/where-entry.ui")]
     public class WhereEntry : Gtk.Box {
         // private GtkSource.
 

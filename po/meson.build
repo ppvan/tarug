@@ -1,1 +1,1 @@
-i18n.gettext('psequel', preset: 'glib')
+i18n.gettext('tarug', preset: 'glib')

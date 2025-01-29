@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
-        input: 'me.ppvan.psequel.desktop.in',
-       output: 'me.ppvan.psequel.desktop',
+        input: 'io.github.ppvan.tarug.desktop.in',
+       output: 'io.github.ppvan.tarug.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -14,8 +14,8 @@ endif
 
 
 appstream_file = i18n.merge_file(
-        input: 'me.ppvan.psequel.metainfo.xml.in',
-       output: 'me.ppvan.psequel.metainfo.xml',
+        input: 'io.github.ppvan.tarug.metainfo.xml.in',
+       output: 'io.github.ppvan.tarug.metainfo.xml',
        po_dir: '../po',
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
@@ -29,7 +29,7 @@ if appstreamcli.found()
 endif
 
 
-install_data('me.ppvan.psequel.gschema.xml',
+install_data('io.github.ppvan.tarug.gschema.xml',
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 

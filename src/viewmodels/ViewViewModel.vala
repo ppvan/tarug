@@ -1,6 +1,6 @@
 using Gee;
 
-namespace Psequel {
+namespace Tarug {
 /* View here is database view (virtual tables), not UI */
     public class ViewViewModel : BaseViewModel {
         public ObservableList<View> views { get; set; default = new ObservableList<View> (); }
@@ -57,14 +57,14 @@ namespace Psequel {
                 if (relation.rows > 0) {
                     return(relation[0][0]);
                 }
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 debug("Error: " + err.message);
             }
 
             return("Error: can't get view def for " + view_name);
         }
 
-        private async void load_views (Schema schema) throws PsequelError {
+        private async void load_views (Schema schema) throws tarugError {
             debug("loading views");
             var query = new Query.with_params(VIEW_LIST, { schema.name });
             var relation = yield sql_service.exec_query_params (query);

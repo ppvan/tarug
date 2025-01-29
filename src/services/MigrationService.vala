@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class MigrationService : Object {
         private StorageService storage;
 
@@ -12,7 +12,7 @@ namespace Psequel {
                 string ? err_msg = null;
 
                 debug("Setup database baseline");
-                var file = File.new_for_uri("resource:///me/ppvan/psequel/migrations/version-0.sql");
+                var file = File.new_for_uri("resource:///io/github/ppvan/tarug/migrations/version-0.sql");
 
                 file.load_contents(null, out file_content, null);
                 storage.exec((string) file_content, out err_msg);
@@ -38,7 +38,7 @@ namespace Psequel {
                 string ? err_msg = null;
 
                 debug("Apply migrations version: %d", version);
-                var file = File.new_for_uri("resource:///me/ppvan/psequel/migrations/version-%d.sql".printf(version));
+                var file = File.new_for_uri("resource:///io/github/ppvan/tarug/migrations/version-%d.sql".printf(version));
 
                 file.load_contents(null, out file_content, null);
                 storage.exec((string) file_content, out err_msg);

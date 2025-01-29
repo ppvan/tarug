@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/style-switcher.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/style-switcher.ui")]
     public class StyleSwitcher : Gtk.Widget {
         [GtkChild] unowned Gtk.CheckButton system_selector;
         [GtkChild] unowned Gtk.CheckButton light_selector;

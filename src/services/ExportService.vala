@@ -1,11 +1,11 @@
-namespace Psequel {
+namespace Tarug {
     public class ExportService : Object {
         public const string DELIMETER = ",";
         public const string NEWLINE = "\n";
 
         public ExportService(){}
 
-        public async void export_csv (File dest, Relation relation) throws PsequelError {
+        public async void export_csv (File dest, Relation relation) throws tarugError {
             string[] rows = new string[relation.rows + 1];
             string[] cols = new string[relation.cols];
 
@@ -30,7 +30,7 @@ namespace Psequel {
             try {
                 yield dest.replace_contents_bytes_async (bytes, null, false, FileCreateFlags.PRIVATE, null, null);
             } catch (GLib.Error err) {
-                throw new PsequelError.EXPORT_ERROR(err.message);
+                throw new tarugError.EXPORT_ERROR(err.message);
             }
         }
 

@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/restore-dialog.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/restore-dialog.ui")]
     public class RestoreDialog : Adw.Dialog {
         public static string[] FORMATS = {
             "custom",

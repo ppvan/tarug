@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class Query : Object, Json.Serializable {
         // Properties must be public, get, set inorder to Json.Serializable works
         public int64 id { get; set; default = 0; }

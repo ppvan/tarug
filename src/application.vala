@@ -19,7 +19,7 @@
  */
 using Csv;
 
-namespace Psequel {
+namespace Tarug {
     public enum ApplicationStyle {
         SYSTEM = 0,
         LIGHT,
@@ -136,37 +136,37 @@ namespace Psequel {
 
         public static int main (string[] args){
             ensure_types();
-            var app = new Psequel.Application();
+            var app = new Tarug.Application();
 
             return app.run(args);
         }
 
         /* register needed types, allow me to ref a template inside a template */
         private static void ensure_types (){
-            typeof (Psequel.StyleSwitcher).ensure();
-            typeof (Psequel.TableRow).ensure();
-            typeof (Psequel.TableGraph).ensure();
-            typeof (Psequel.WhereEntry).ensure();
-            typeof (Psequel.DataCell).ensure();
-            typeof (Psequel.BackupDialog).ensure();
-            typeof (Psequel.RestoreDialog).ensure();
-            typeof (Psequel.SchemaView).ensure();
+            typeof (Tarug.StyleSwitcher).ensure();
+            typeof (Tarug.TableRow).ensure();
+            typeof (Tarug.TableGraph).ensure();
+            typeof (Tarug.WhereEntry).ensure();
+            typeof (Tarug.DataCell).ensure();
+            typeof (Tarug.BackupDialog).ensure();
+            typeof (Tarug.RestoreDialog).ensure();
+            typeof (Tarug.SchemaView).ensure();
 
-            typeof (Psequel.ConnectionRow).ensure();
-            typeof (Psequel.ConnectionView).ensure();
-            typeof (Psequel.QueryResults).ensure();
-            typeof (Psequel.QueryEditor).ensure();
-            typeof (Psequel.EditRowDialog).ensure();
-            typeof (Psequel.TableStructureView).ensure();
-            typeof (Psequel.TableColumnInfo).ensure();
-            typeof (Psequel.TableIndexInfo).ensure();
-            typeof (Psequel.ViewStructureView).ensure();
-            typeof (Psequel.TableDataView).ensure();
-            typeof (Psequel.ViewDataView).ensure();
+            typeof (Tarug.ConnectionRow).ensure();
+            typeof (Tarug.ConnectionView).ensure();
+            typeof (Tarug.QueryResults).ensure();
+            typeof (Tarug.QueryEditor).ensure();
+            typeof (Tarug.EditRowDialog).ensure();
+            typeof (Tarug.TableStructureView).ensure();
+            typeof (Tarug.TableColumnInfo).ensure();
+            typeof (Tarug.TableIndexInfo).ensure();
+            typeof (Tarug.ViewStructureView).ensure();
+            typeof (Tarug.TableDataView).ensure();
+            typeof (Tarug.ViewDataView).ensure();
         }
 
         private void on_about_action (){
-            string app_data_resource = "/me/ppvan/psequel/appdata";
+            string app_data_resource = "/io/github/ppvan/tarug/appdata";
             var about = new Adw.AboutDialog.from_appdata (app_data_resource, Config.VERSION);
             about.present (this.active_window);
         }

@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template $PsequelConnectionRow: Gtk.Box {
+template $TarugConnectionRow: Gtk.Box {
   orientation: horizontal;
   spacing: 12;
 
@@ -9,7 +9,7 @@ template $PsequelConnectionRow: Gtk.Box {
   }
 
   Label {
-    label: bind template.item as <$PsequelConnection>.name;
+    label: bind template.item as <$TarugConnection>.name;
     halign: start;
     ellipsize: end;
     single-line-mode: true;

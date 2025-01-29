@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class ConnectionViewModel : BaseViewModel {
         public enum State {
             IDLE,
@@ -92,7 +92,7 @@ namespace Psequel {
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 this.err_msg = err.message.dup();
                 debug("Error: %s", err.message);
                 this.current_state = State.ERROR;

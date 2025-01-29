@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class QueryViewModel : BaseViewModel {
         public QueryHistoryViewModel query_history_viewmodel { get; set; }
 

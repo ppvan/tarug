@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class SchemaViewModel : BaseViewModel {
         const string DEFAULT = "public";
 
@@ -45,19 +45,19 @@ namespace Psequel {
             select_schema.begin(schemas[index]);
         }
 
-        public async void reload () throws PsequelError {
+        public async void reload () throws tarugError {
             if (current_schema == null) {
                 return;
             }
             yield select_schema (current_schema);
         }
 
-        public async void logout () throws PsequelError {
+        public async void logout () throws tarugError {
             current_schema = null;
             schemas.clear();
         }
 
-        private async void database_connected () throws PsequelError {
+        private async void database_connected () throws tarugError {
             // auto load schema list.
             yield load_schemas ();
 
@@ -65,13 +65,13 @@ namespace Psequel {
         }
 
         /** Select current schema */
-        private async void select_schema (Schema schema) throws PsequelError {
+        private async void select_schema (Schema schema) throws tarugError {
             debug("Select schema: %s", schema.name);
             current_schema = schema;
         }
 
         /** List schema from database. */
-        private async void load_schemas () throws PsequelError {
+        private async void load_schemas () throws tarugError {
             var unload_schemas = yield schema_service.schema_list ();
 
             var public_first_schemas = new List<Schema> ();

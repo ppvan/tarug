@@ -1,5 +1,5 @@
 # Source code
-psequel_sources = files(
+tarug_sources = files(
     'models/Connection.vala',
     'models/Query.vala',
     'models/Relation.vala',
@@ -70,8 +70,8 @@ vapi_dir = join_paths(meson.current_source_dir(), 'vapi')
 conf = configuration_data()
 
 conf.set_quoted('APP_ID', app_id)
-conf.set_quoted('APP_NAME', 'Psequel')
-conf.set_quoted('G_LOG_DOMAIN', 'Psequel')
+conf.set_quoted('APP_NAME', 'Tarug')
+conf.set_quoted('G_LOG_DOMAIN', 'Tarug')
 conf.set_quoted('VERSION', meson.project_version())
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf.set_quoted(
@@ -87,7 +87,7 @@ configure_file(output: 'config.h', configuration: conf)
 cc = meson.get_compiler('c')
 math_dep = cc.find_library('m', required: false)
 
-psequel_deps = [
+tarug_deps = [
     # assume exists typical gtk system
     dependency('glib-2.0', version: '>=2.80'),
     dependency('gtk4', version: '>=4.10'),
@@ -107,7 +107,7 @@ add_project_arguments(
     [
         '--target-glib=2.80',
         '--vapidir', vapi_dir,
-        '--gresourcesdir', psequel_resources_dir,
+        '--gresourcesdir', tarug_resources_dir,
         '--enable-deprecated',
         '--pkg', 'csv'
     ],
@@ -135,14 +135,14 @@ add_project_arguments(
     language: 'c',
 )
 
-psequel_sources_main = psequel_sources + ui_sources + files('application.vala')
+tarug_sources_main = tarug_sources + ui_sources + files('application.vala')
 
 executable(
     app_name,
-    [psequel_resources, psequel_sources_main],
-    dependencies: psequel_deps,
+    [tarug_resources, tarug_sources_main],
+    dependencies: tarug_deps,
     vala_args: [
-        '--gresourcesdir=' + psequel_resources_dir,
+        '--gresourcesdir=' + tarug_resources_dir,
     ],
     install: true,
 )

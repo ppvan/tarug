@@ -1,6 +1,6 @@
-namespace Psequel {
+namespace Tarug {
 // valalint=skip-file
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/preferences-window.ui")]
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/preferences-window.ui")]
     public class PreferencesWindow : Adw.PreferencesDialog {
 
         private Settings ? settings;

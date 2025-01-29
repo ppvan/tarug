@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-namespace Psequel {
+namespace Tarug {
 /**
  * Connection info. Have basic infomation to establish a connection to server.
  */

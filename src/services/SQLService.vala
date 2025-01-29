@@ -1,6 +1,6 @@
 using Postgres;
 
-namespace Psequel {
+namespace Tarug {
 /** Main entry poit of application, exec query and return result.
  *
  * Do any thing relate to database, wrapper of libpq
@@ -21,7 +21,7 @@ namespace Psequel {
         }
 
         /** Select info from a table. */
-        public async Relation select (BaseTable table, int page, int size = query_limit) throws PsequelError {
+        public async Relation select (BaseTable table, int page, int size = query_limit) throws tarugError {
             string schema_name = active_db.escape_identifier(table.schema.name);
             string escape_tbname = active_db.escape_identifier(table.name);
             int offset = page * size;
@@ -32,7 +32,7 @@ namespace Psequel {
             return yield exec_query (query);
         }
 
-        public async Relation select_where (BaseTable table, string where_clause, int page, int size = query_limit) throws PsequelError {
+        public async Relation select_where (BaseTable table, string where_clause, int page, int size = query_limit) throws tarugError {
             string schema_name = active_db.escape_identifier(table.schema.name);
             string escape_tbname = active_db.escape_identifier(table.name);
             int offset = page * size;
@@ -52,7 +52,7 @@ namespace Psequel {
         }
 
         /** Make a connection to database and active connection. */
-        public async void connect_db (Connection conn) throws PsequelError {
+        public async void connect_db (Connection conn) throws tarugError {
             var connection_timeout = settings.get_int("connection-timeout");
             var query_timeout = settings.get_int("query-timeout");
             string db_url = conn.connection_string(connection_timeout, query_timeout);
@@ -77,7 +77,7 @@ namespace Psequel {
             }
         }
 
-        public async Relation exec_query (Query query) throws PsequelError {
+        public async Relation exec_query (Query query) throws tarugError {
             int64 begin = GLib.get_real_time();
             var result = yield exec_query_internal (query.sql);
 
@@ -93,7 +93,7 @@ namespace Psequel {
             return new Relation((owned) res);
         }
 
-        public async Relation exec_query_params (Query query) throws PsequelError {
+        public async Relation exec_query_params (Query query) throws tarugError {
             assert(query.params != null);
 
             var result = yield exec_query_params_internal (query.sql, query.params);
@@ -106,7 +106,7 @@ namespace Psequel {
             return table;
         }
 
-        public async void update_row (Table table, Vec<TableField> fields) throws PsequelError {
+        public async void update_row (Table table, Vec<TableField> fields) throws tarugError {
             var stringBuilder = new StringBuilder("UPDATE ");
             stringBuilder.append(escape_tablename(table));
 
@@ -160,7 +160,7 @@ namespace Psequel {
             return @"$schema_name.$escape_tbname";
         }
 
-        private void check_connection_status () throws PsequelError {
+        private void check_connection_status () throws tarugError {
             var status = active_db.get_status();
             switch (status) {
                 case Postgres.ConnectionStatus.OK:
@@ -169,7 +169,7 @@ namespace Psequel {
 
                 case Postgres.ConnectionStatus.BAD:
                     var err_msg = active_db.get_error_message();
-                    throw new PsequelError.CONNECTION_ERROR(err_msg);
+                    throw new tarugError.CONNECTION_ERROR(err_msg);
 
                 default:
                     debug("Programming error: %s not handled", status.to_string());
@@ -177,7 +177,7 @@ namespace Psequel {
             }
         }
 
-        private void check_query_status (Result result) throws PsequelError {
+        private void check_query_status (Result result) throws tarugError {
             var status = result.get_status();
 
             switch (status) {
@@ -188,11 +188,11 @@ namespace Psequel {
                 case ExecStatus.FATAL_ERROR:
                     var err_msg = result.get_error_message();
                     debug("Fatal error: %s", err_msg);
-                    throw new PsequelError.QUERY_FAIL(err_msg.dup());
+                    throw new tarugError.QUERY_FAIL(err_msg.dup());
 
                 case ExecStatus.EMPTY_QUERY:
                     debug("Empty query");
-                    throw new PsequelError.QUERY_FAIL("Empty query");
+                    throw new tarugError.QUERY_FAIL("Empty query");
 
                 default:
                     warning("Programming error: %s not handled", status.to_string());
@@ -200,7 +200,7 @@ namespace Psequel {
             }
         }
 
-        private async Result exec_query_internal (string query) throws PsequelError {
+        private async Result exec_query_internal (string query) throws tarugError {
             debug("Exec: %s", query);
             TimePerf.begin();
 
@@ -227,7 +227,7 @@ namespace Psequel {
             }
         }
 
-        private async Result exec_query_params_internal (string query, Vec<string> params) throws PsequelError {
+        private async Result exec_query_params_internal (string query, Vec<string> params) throws tarugError {
             debug("Exec Param: %s", query);
             TimePerf.begin();
 

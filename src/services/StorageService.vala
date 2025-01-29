@@ -1,6 +1,6 @@
 using Sqlite;
 
-namespace Psequel {
+namespace Tarug {
     public class StorageService : Object {
         private string database_path;
         private Database connection;

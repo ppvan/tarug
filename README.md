@@ -3,7 +3,7 @@
 -->
 <h1 align="center">
 <img
-    src="data/icons/hicolor/scalable/apps/me.ppvan.psequel.svg" alt="PSequel"
+    src="data/icons/hicolor/scalable/apps/io.github.ppvan.tarug.svg" alt="tarug"
     width="128"
     height="128"/><br/>
     PSequel
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-<a href="https://flathub.org/apps/me.ppvan.psequel">
+<a href="https://flathub.org/apps/io.github.ppvan.tarug">
     <img width="200" src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Download on Flathub">
 </a>
 </p>
@@ -46,7 +46,7 @@ Small tool for quick sql query, specialized in PostgresSQL. Written in Vala for 
 ## Flatpak
 > **Recommended**
 
-<a href="https://flathub.org/apps/me.ppvan.psequel">Click here</a> to install app from Flathub.
+<a href="https://flathub.org/apps/io.github.ppvan.tarug">Click here</a> to install app from Flathub.
 
 ## Build from source
 
@@ -77,10 +77,10 @@ meson setup --prefix=/usr build/ && ninja -C build install
 > TBU
 
 
-Psequel can be built directly via Meson:
+Tarug can be built directly via Meson:
 ```bash
-git clone https://github.com/ppvan/psequel
-cd psequel
+git clone https://github.com/ppvan/tarug
+cd tarug
 meson build
 cd build
 meson compile
@@ -104,6 +104,6 @@ Contributions are welcome.
 
 # Credits
 
-- [Psequel](https://psequel.com/) - MacOS postgresql client. This project is inspired by Psequel.
+- [Tarug](https://tarug.com/) - MacOS postgresql client. This project is inspired by Tarug.
 - [libpg_query](https://github.com/pganalyze/libpg_query) - PostgresSQL parser
 - [libcsv](https://github.com/rgamble/libcsv) - Robust C csv library

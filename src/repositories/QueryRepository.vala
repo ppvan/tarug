@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class QueryRepository : Object {
         const string KEY = "queries";
 

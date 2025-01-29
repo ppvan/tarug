@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template $PsequelTableStructureView: Gtk.Box {
+template $TarugTableStructureView: Gtk.Box {
     orientation: vertical;
     margin-top: 22;
     margin-bottom: 12;
@@ -12,7 +12,7 @@ template $PsequelTableStructureView: Gtk.Box {
         row-homogeneous: true;
         column-homogeneous: true;
         row-spacing: 24;
-        $PsequelTableColumnInfo columns {
+        $TarugTableColumnInfo columns {
             columns: bind template.columns;
             layout {
               row: 0;
@@ -21,7 +21,7 @@ template $PsequelTableStructureView: Gtk.Box {
             }
         }
 
-        $PsequelTableIndexInfo indexes {
+        $TarugTableIndexInfo indexes {
             indexes: bind template.indexes;
             layout {
               row: 2;

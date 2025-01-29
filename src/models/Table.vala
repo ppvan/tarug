@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public abstract class BaseTable : Object {
         public Schema schema { get; construct; }
         public string name { get; set; }

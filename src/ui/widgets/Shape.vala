@@ -1,6 +1,6 @@
 using Gtk;
 using Gdk;
-namespace Psequel {
+namespace Tarug {
     public interface Shape : Object {
         public abstract void draw (Cairo.Context cr, int width, int height);
     }
@@ -231,16 +231,6 @@ namespace Psequel {
         private string filepath;
 
         public CairoIcon(string iconname){
-            // uint8[] file_content;
-
-            var filename = "resource:///me/ppvan/psequel/icons/scalable/actions/%s.svg".printf(iconname);
-            var file = File.new_for_uri(filename);
-            // file.load_contents(null, out file_content, null);
-
-            this.filepath = file.get_path();
-
-            // debug(filepath);
-            // debug ((string)file_content);
         }
 
         public void draw (Cairo.Context cr, int width, int height){

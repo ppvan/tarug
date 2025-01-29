@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/query-results.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/query-results.ui")]
     public class QueryResults : Adw.Bin {
         const string EMPTY = "empty";
         const string MAIN = "data";

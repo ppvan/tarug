@@ -1,6 +1,6 @@
 using Postgres;
 
-namespace Psequel {
+namespace Tarug {
     public delegate Relation.Row TransFormsFunc (Relation.Row row);
 
 /**

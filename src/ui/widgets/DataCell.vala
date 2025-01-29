@@ -1,8 +1,8 @@
 using Gdk;
 using Csv;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/datacell.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/datacell.ui")]
     public class DataCell : Adw.Bin {
         private Relation.Row current_row;
         private int current_index;
@@ -26,7 +26,7 @@ namespace Psequel {
         }
 
 
-        public void bind_data (Psequel.Relation.Row row, int index){
+        public void bind_data (Tarug.Relation.Row row, int index){
             this.current_row = row;
             this.current_index = index;
             var val = row[index];
@@ -34,7 +34,7 @@ namespace Psequel {
             this.label.min_chars = val.length + 1;
         }
 
-        public void unbind_data (Psequel.Relation.Row row){
+        public void unbind_data (Tarug.Relation.Row row){
             this._is_busy = false;
         }
 

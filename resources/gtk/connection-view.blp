@@ -57,7 +57,7 @@ menu primary_menu {
     }
 }
 
-template $PsequelConnectionView: Adw.Bin {
+template $TarugConnectionView: Adw.Bin {
     hexpand: true;
     vexpand: true;
 
@@ -113,23 +113,23 @@ template $PsequelConnectionView: Adw.Bin {
                     ]
 
                     model: SingleSelection selection_model {
-                        model: bind template.viewmodel as <$PsequelConnectionViewModel>.connections;
+                        model: bind template.viewmodel as <$TarugConnectionViewModel>.connections;
                         autoselect: true;
                     };
 
                     activate => $active_connection();
 
                     factory: BuilderListItemFactory {
-                        resource: "/me/ppvan/psequel/gtk/connection-listitem.ui";
+                        resource: "/io/github/ppvan/tarug/gtk/connection-listitem.ui";
                     };
                 }
             }
         }
 
-        // $PsequelConnectionSidebar sidebar {
+        // $TarugConnectionSidebar sidebar {
         //   width-request: 300;
-        //   connections: bind template.viewmodel as <$PsequelConnectionViewModel>.connections;
-        //   selected-connection: bind template.viewmodel as <$PsequelConnectionViewModel>.selected-connection;
+        //   connections: bind template.viewmodel as <$TarugConnectionViewModel>.connections;
+        //   selected-connection: bind template.viewmodel as <$TarugConnectionViewModel>.selected-connection;
         //   request-new-connection => $add_new_connection();
         //   request_dup_connection => $dup_connection();
         //   request_remove_connection => $remove_connection();
@@ -166,7 +166,7 @@ template $PsequelConnectionView: Adw.Bin {
                                 menu-model: primary_menu;
 
                                 [style-switcher]
-                                $PsequelStyleSwitcher {}
+                                $TarugStyleSwitcher {}
                             };
                         }
                     }
@@ -198,7 +198,7 @@ template $PsequelConnectionView: Adw.Bin {
                                         "title-0"
                                     ]
 
-                                    label: "Connect with Psequel";
+                                    label: "Connect with Tarug";
                                 }
 
                                 Grid {
@@ -413,7 +413,7 @@ template $PsequelConnectionView: Adw.Bin {
                                     spacing: 8;
 
                                     Spinner spinner {
-                                        spinning: bind template.viewmodel as <$PsequelConnectionViewModel>.is-connectting;
+                                        spinning: bind template.viewmodel as <$TarugConnectionViewModel>.is-connectting;
                                     }
 
                                     Button connect_btn {
@@ -432,11 +432,11 @@ template $PsequelConnectionView: Adw.Bin {
             };
         }
 
-        // $PsequelConnectionForm form {
+        // $TarugConnectionForm form {
         //     width-request: 800;
         //     selected-connection: bind sidebar.selected-connection;
-        //     is-connectting: bind template.viewmodel as <$PsequelConnectionViewModel>.is-connectting;
-        //     current-state: bind template.viewmodel as <$PsequelConnectionViewModel>.current-state;
+        //     is-connectting: bind template.viewmodel as <$TarugConnectionViewModel>.is-connectting;
+        //     current-state: bind template.viewmodel as <$TarugConnectionViewModel>.current-state;
         //     menu-model: primary_menu;
         //     request-database => $active_connection ();
         //     connections-changed => $save_connections ();

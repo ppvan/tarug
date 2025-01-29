@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class SQLCompletionService : Object, GtkSource.CompletionProvider {
         private CompleterService completer;
         private Gtk.FilterListModel model;

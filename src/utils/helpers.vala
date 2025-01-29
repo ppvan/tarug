@@ -1,8 +1,8 @@
-namespace Psequel {
+namespace Tarug {
     public Window get_parrent_window (Gtk.Widget widget){
         var window = widget.get_root();
 
-        if (window is Psequel.Window) {
+        if (window is Tarug.Window) {
             return((Window) window);
         } else {
             warning("Widget %s root is not a window", widget.name);

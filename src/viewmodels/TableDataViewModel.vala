@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class TableDataViewModel : DataViewModel {
         public const int MAX_FETCHED_ROW = 50;
 
@@ -67,7 +67,7 @@ namespace Psequel {
 
                 is_loading = false;
                 debug("Rows: %d", current_relation.rows);
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 this.err_msg = err.message;
             }
         }

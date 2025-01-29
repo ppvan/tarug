@@ -1,6 +1,6 @@
-data/me.ppvan.psequel.desktop.in
-data/me.ppvan.psequel.appdata.xml.in
-data/me.ppvan.psequel.gschema.xml
+data/io.github.ppvan.tarug.desktop.in
+data/io.github.ppvan.tarug.appdata.xml.in
+data/io.github.ppvan.tarug.gschema.xml
 src/main.vala
 src/window.vala
 src/window.ui

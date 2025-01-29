@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template $PsequelTableDataView: Gtk.Box {
+template $TarugTableDataView: Gtk.Box {
     width-request: 900;
     height-request: 600;
     orientation: vertical;
@@ -13,14 +13,14 @@ template $PsequelTableDataView: Gtk.Box {
     Box {
         spacing: 3;
         orientation: vertical;
-        $PsequelWhereEntry {}
+        $TarugWhereEntry {}
         Separator {}
     }
 
-    $PsequelQueryResults query_results {
-        current-relation: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.current-relation;
-        is-loading: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.is-loading;
-        err-msg: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.err-msg;
+    $TarugQueryResults query_results {
+        current-relation: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.current-relation;
+        is-loading: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.is-loading;
+        err-msg: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.err-msg;
         show-loading: false;
     }
 
@@ -50,7 +50,7 @@ template $PsequelTableDataView: Gtk.Box {
 
         // Separator {}
         Label status_label {
-            label: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.row-ranges;
+            label: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.row-ranges;
             halign: start;
         }
 
@@ -64,7 +64,7 @@ template $PsequelTableDataView: Gtk.Box {
                 "flat"
             ]
 
-            sensitive: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.has-pre-page;
+            sensitive: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.has-pre-page;
             icon-name: "left-large-symbolic";
             tooltip-text: "Last Page";
             clicked => $pre_page();
@@ -75,7 +75,7 @@ template $PsequelTableDataView: Gtk.Box {
                 "flat"
             ]
 
-            sensitive: bind template.tabledata-viewmodel as <$PsequelTableDataViewModel>.has-next-page;
+            sensitive: bind template.tabledata-viewmodel as <$TarugTableDataViewModel>.has-next-page;
             icon-name: "right-large-symbolic";
             tooltip-text: "Next Page";
             clicked => $next_page();

@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
 /** Class process and load {@link Schema} infomation */
     public class SchemaService : Object {
         public const string SCHEMA_LIST_SQL = """
@@ -27,7 +27,7 @@ namespace Psequel {
                     var s = new Schema(relation[i][0]);
                     list.append(s);
                 }
-            } catch (PsequelError err) {
+            } catch (tarugError err) {
                 debug(err.message);
             }
 

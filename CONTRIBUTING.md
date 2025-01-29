@@ -19,10 +19,13 @@ flatpak
 
 Follow the postgres setup guide in [this gist](https://gist.github.com/NickMcSweeney/3444ce99209ee9bd9393ae6ab48599d8)
 
-### 3. Build Psequel
+I often use the dvdrental sample db when develop and test tarug.
+
+
+### 3. Build Tarug
 
 - Install Flatpak Intergration for VScode [extension](https://github.com/bilelmoussaoui/flatpak-vscode)
-- Open VScode commmand prompt (Ctr+Shift+P/Cmd+Shift+P) type: "Flatpak: Select or change manifest", make sure it's me.ppvan.psequel
+- Open VScode commmand prompt (Ctr+Shift+P/Cmd+Shift+P) type: "Flatpak: Select or change manifest", make sure it's io.github.ppvan.tarug
 - Open the prompt again and type "Flatpak: Build and Run"
 - Start patching!!
 
@@ -50,7 +53,7 @@ If you do not see syntax hightlight or meson error, check your local .vscode set
     "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh",
     "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh",
     "mesonbuild.buildFolder": "_build",
-    "C_Cpp.default.compileCommands": "/home/ppvan/Documents/code/github/psequel/_build/compile_commands.json",
+    "C_Cpp.default.compileCommands": "/home/ppvan/Documents/code/github/tarug/_build/compile_commands.json",
     "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }
 ```
@@ -58,3 +61,4 @@ If you do not see syntax hightlight or meson error, check your local .vscode set
 
 ## Project structure
 
+To be update.

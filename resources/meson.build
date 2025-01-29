@@ -5,7 +5,7 @@ blueprint_compiler = find_program('blueprint-compiler')
 # CURRENT_SOURCE_DIR relative to BUILDDIR blueprints_output_dir = meson.current_build_dir()
 # This is a hack to make sure below target was run. For some reason you can't use example from blueprint docs.
 
-psequel_resources_dir = meson.current_build_dir()
+tarug_resources_dir = meson.current_build_dir()
 
 mark_ups = [
     'gtk/connection-listitem.blp',
@@ -98,17 +98,17 @@ resource_data.set('UI_FILES', ui_files)
 resource_data.set('ICON_FILES', icon_files)
 
 
-psequel_resources_xml = configure_file(
-    input: 'psequel.gresource.xml.in',
-    output: 'psequel.gresource.xml',
+tarug_resources_xml = configure_file(
+    input: 'tarug.gresource.xml.in',
+    output: 'tarug.gresource.xml',
     configuration: resource_data,
 )
 
 
-psequel_resources = gnome.compile_resources(
-    'psequel_resources',
-    psequel_resources_xml,
-    c_name: 'psequel_resources',
+tarug_resources = gnome.compile_resources(
+    'tarug_resources',
+    tarug_resources_xml,
+    c_name: 'tarug_resources',
     dependencies: [blueprints],
     build_by_default: true
 )

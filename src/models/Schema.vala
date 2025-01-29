@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
 /**
  * Carying schema info like tables and views.
  */

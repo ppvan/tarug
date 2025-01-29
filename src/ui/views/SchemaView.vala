@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/schema-view.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/schema-view.ui")]
     public class SchemaView : Adw.Bin {
         public SchemaViewModel schema_viewmodel { get; set; }
         public TableViewModel table_viewmodel { get; set; }

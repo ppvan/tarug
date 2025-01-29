@@ -1,5 +1,5 @@
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/connection-view.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/connection-view.ui")]
     public class ConnectionView : Adw.Bin {
 
         // Data source
@@ -234,7 +234,7 @@ namespace Psequel {
 
 
 
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/connection-row.ui")]
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/connection-row.ui")]
     public class ConnectionRow : Gtk.Box {
         public Connection item { get; set; }
         public uint pos { get; set; }

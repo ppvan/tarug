@@ -1,8 +1,8 @@
 
 
-namespace Psequel {
+namespace Tarug {
 
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/table-cols.ui")]
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/table-cols.ui")]
     public class TableColumnInfo : Adw.Bin {
 
         public ObservableList<Column> columns { get; set; }

@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public class DataViewModel : BaseViewModel {
         public bool has_pre_page { get; set; }
         public bool has_next_page { get; set; }

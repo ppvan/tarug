@@ -1,4 +1,4 @@
-namespace Psequel {
+namespace Tarug {
     public void set_up_logging (){
         var debug_domain = Environment.get_variable("G_MESSAGES_DEBUG");
         var prog = GLib.Environment.get_prgname();

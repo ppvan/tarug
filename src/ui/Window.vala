@@ -20,8 +20,8 @@
 
 using GLib;
 
-namespace Psequel {
-    [GtkTemplate(ui = "/me/ppvan/psequel/gtk/window.ui")]
+namespace Tarug {
+    [GtkTemplate(ui = "/io/github/ppvan/tarug/gtk/window.ui")]
     public class Window : Adw.ApplicationWindow {
         const ActionEntry[] ACTIONS = {
             { "import", import_connection },
