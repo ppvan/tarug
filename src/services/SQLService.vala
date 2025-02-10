@@ -51,36 +51,76 @@ namespace Tarug {
             return yield exec_query (query);
         }
 
-        /** Make a connection to database and active connection. */
+        /**
+         * Make a async Postgres connection.
+        */
         public async void connect_db (Connection conn) throws tarugError {
+            var db_url = build_connection_string(conn);
+            debug("Connecting to %s", db_url);
+            start_connect (db_url);
+
+            /*
+             * Begin the polling loop to keep checking the connection is good
+               Reference: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PQCONNECTSTARTPARAMS
+               Setup: last_poll is WRITE
+               Switch:
+                    Case: WRITE -> wait until the socket ready to write.
+                                   Refresh poll status and socket.
+                                   Go to yield point
+                    Case: READ  -> wait until the socket ready to write.
+                                   Refresh poll and socket
+                                   Go to yeild point
+                    Case Failed: throw error
+                    Case Sucess: Break the loop (success).
+             */
+            var last_poll = Postgres.PollingStatus.WRITING;
+            var fd = active_db.get_socket ();
+            SourceFunc go_to_yield = connect_db.callback;
+            while (true) {
+                if (last_poll == Postgres.PollingStatus.WRITING) {
+                    var channel = new IOChannel.unix_new(fd);
+                    channel.add_watch(IOCondition.OUT, (source, condition) => {
+                        last_poll = active_db.connect_poll ();
+                        fd = active_db.get_socket ();
+                        go_to_yield();
+
+                        return false;
+                    });
+                } else if (last_poll == Postgres.PollingStatus.READING) {
+                    var channel = new IOChannel.unix_new(fd);
+                    channel.add_watch(IOCondition.IN, (source, condition) => {
+                        last_poll = active_db.connect_poll ();
+                        fd = active_db.get_socket ();
+                        go_to_yield();
+
+                        return false;
+                    });
+                } else if (last_poll == Postgres.PollingStatus.FAILED) {
+                    var err_msg = active_db.get_error_message();
+                    throw new tarugError.CONNECTION_ERROR(err_msg);
+                } else {
+                    active_db = (owned)active_db;
+                    break;
+                }
+                yield; // give up cpu control
+            }
+        }
+
+        private void start_connect(string db_url) throws tarugError {
+            var active_db = Postgres.connect_start (db_url);
+            var status = active_db.get_status ();
+            if (status == Postgres.ConnectionStatus.BAD) {
+                var err_msg = active_db.get_error_message();
+                throw new tarugError.CONNECTION_ERROR(err_msg);
+            }
+        }
+
+        private string build_connection_string(Connection conn) {
             var connection_timeout = settings.get_int("connection-timeout");
             var query_timeout = settings.get_int("query-timeout");
             string db_url = conn.connection_string(connection_timeout, query_timeout);
-            debug("Connecting to %s", db_url);
-            TimePerf.begin();
-            SourceFunc callback = connect_db.callback;
-            try {
-                var worker = new Worker("connect database", () => {
-                    active_db = Postgres.connect_db(db_url);
-                    
-                    debug ("Socket: %d", active_db.get_socket ());
-                    debug ("Status: %d", active_db.get_status ());
 
-                    //  active_poll_chanel = new IOChannel.unix_new(active_db.get_socket());
-
-
-                    // Jump to yield
-                    Idle.add((owned) callback);
-                });
-                background.add(worker);
-
-                yield;
-                TimePerf.end();
-                check_connection_status();
-            } catch (ThreadError err) {
-                debug(err.message);
-                assert_not_reached();
-            }
+            return db_url;
         }
 
         public async Relation exec_query (Query query) throws tarugError {
@@ -235,8 +275,6 @@ namespace Tarug {
         }
 
         private async Result exec_query_epoll (string query){
-            debug ("Begin async");
-
             Postgres.Result query_result = null;
             SourceFunc callback = exec_query_epoll.callback;
 
@@ -290,20 +328,7 @@ namespace Tarug {
             }
         }
 
-        //  private bool socket_event_handler (IOChannel source, IOCondition condition){
-        //      if (condition == IOCondition.HUP) {
-        //          // TODO: Handle connection lost
-        //          return false;
-        //      }
-
-        //      processReadEvent();
-        //  }
-
-        //  private void processReadEvent (){
-        //  }
-
         private Database active_db;
-        private IOChannel active_poll_chanel;
         private unowned ThreadPool<Worker> background;
     }
 }
