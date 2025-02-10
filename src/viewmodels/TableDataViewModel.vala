@@ -72,14 +72,14 @@ namespace Tarug {
             }
         }
 
-        public async void update_row (Vec<TableField> fields){
-            var table = this.selected_table;
-            if (table == null) {
-                return;
-            }
+        //  public async void update_row (Vec<TableField> fields){
+        //      var table = this.selected_table;
+        //      if (table == null) {
+        //          return;
+        //      }
 
-            //  yield this.sql_service.update_row (table, fields);
-        }
+        //      //  yield this.sql_service.update_row (table, fields);
+        //  }
 
         // private inline async void
     }

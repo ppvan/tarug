@@ -62,6 +62,12 @@ namespace Tarug {
             try {
                 var worker = new Worker("connect database", () => {
                     active_db = Postgres.connect_db(db_url);
+                    
+                    debug ("Socket: %d", active_db.get_socket ());
+                    debug ("Status: %d", active_db.get_status ());
+
+                    //  active_poll_chanel = new IOChannel.unix_new(active_db.get_socket());
+
 
                     // Jump to yield
                     Idle.add((owned) callback);
@@ -79,13 +85,14 @@ namespace Tarug {
 
         public async Relation exec_query (Query query) throws tarugError {
             int64 begin = GLib.get_real_time();
-            var result = yield exec_query_internal (query.sql);
+
+            var result = yield exec_query_epoll (query.sql);
 
             check_query_status(result);
 
             int64 end = GLib.get_real_time();
 
-            return new Relation.with_fetch_time((owned) result, end - begin);
+            return new Relation((owned) result);
         }
 
         public Relation make_empty_relation (){
@@ -106,52 +113,52 @@ namespace Tarug {
             return table;
         }
 
-        public async void update_row (Table table, Vec<TableField> fields) throws tarugError {
-            var stringBuilder = new StringBuilder("UPDATE ");
-            stringBuilder.append(escape_tablename(table));
+        //  public async void update_row (Table table, Vec<TableField> fields) throws tarugError {
+        //      var stringBuilder = new StringBuilder("UPDATE ");
+        //      stringBuilder.append(escape_tablename(table));
 
-            var pk_fields = fields.filter((item) => {
-                return item.column.is_primarykey;
-            });
+        //      var pk_fields = fields.filter((item) => {
+        //          return item.column.is_primarykey;
+        //      });
 
-            var changed_fields = fields.filter((item) => {
-                return item.old_value != item.new_value;
-            });
+        //      var changed_fields = fields.filter((item) => {
+        //          return item.old_value != item.new_value;
+        //      });
 
-            stringBuilder.append(" SET ");
+        //      stringBuilder.append(" SET ");
 
-            bool has_changed = false;
-            int index = 0;
-            string[] params = new string[changed_fields.length + pk_fields.length];
-            foreach (var item in changed_fields) {
-                has_changed = true;
-                index++;
-                params[index - 1] = item.new_value;
-                stringBuilder.append_printf("%s = $%d,", item.column.name, index);
-            }
+        //      bool has_changed = false;
+        //      int index = 0;
+        //      string[] params = new string[changed_fields.length + pk_fields.length];
+        //      foreach (var item in changed_fields) {
+        //          has_changed = true;
+        //          index++;
+        //          params[index - 1] = item.new_value;
+        //          stringBuilder.append_printf("%s = $%d,", item.column.name, index);
+        //      }
 
-            if (!has_changed) {
-                return;
-            }
+        //      if (!has_changed) {
+        //          return;
+        //      }
 
-            stringBuilder.erase(stringBuilder.len - 1, 1); // pop remaining ,
+        //      stringBuilder.erase(stringBuilder.len - 1, 1); // pop remaining ,
 
-            // Has atleast one primary key to build WHERE clause
-            if (pk_fields.length > 0) {
-                stringBuilder.append(" WHERE ");
-                foreach (var pk in pk_fields) {
-                    index++;
-                    params[index - 1] = pk.old_value;
-                    stringBuilder.append_printf("%s = $%d AND ", pk.column.name, index);
-                }
+        //      // Has atleast one primary key to build WHERE clause
+        //      if (pk_fields.length > 0) {
+        //          stringBuilder.append(" WHERE ");
+        //          foreach (var pk in pk_fields) {
+        //              index++;
+        //              params[index - 1] = pk.old_value;
+        //              stringBuilder.append_printf("%s = $%d AND ", pk.column.name, index);
+        //          }
 
-                stringBuilder.erase(stringBuilder.len - 4, 4);
-            }
+        //          stringBuilder.erase(stringBuilder.len - 4, 4);
+        //      }
 
-            var query = new Query.with_params(stringBuilder.free_and_steal(), params);
+        //      var query = new Query.with_params(stringBuilder.free_and_steal(), params);
 
-            yield exec_query_params (query);
-        }
+        //      yield exec_query_params (query);
+        //  }
 
         private string escape_tablename (Table table){
             string schema_name = active_db.escape_identifier(table.schema.name);
@@ -227,6 +234,37 @@ namespace Tarug {
             }
         }
 
+        private async Result exec_query_epoll (string query){
+            debug ("Begin async");
+
+            Postgres.Result query_result = null;
+            SourceFunc callback = exec_query_epoll.callback;
+
+            var channel = new IOChannel.unix_new(active_db.get_socket());
+
+            channel.add_watch(IOCondition.IN | IOCondition.HUP, (source, condition) => {
+                if (condition == IOCondition.HUP) {
+                    return false;
+                }
+
+                int ok = active_db.consume_input();
+                if (ok == 1) {
+                    if (active_db.is_busy () == 0) {
+                        query_result = active_db.get_result();
+                        callback();
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            active_db.send_query (query);
+
+            yield;
+
+            return (owned)query_result;
+        }
+
         private async Result exec_query_params_internal (string query, Vec<string> params) throws tarugError {
             debug("Exec Param: %s", query);
             TimePerf.begin();
@@ -252,7 +290,20 @@ namespace Tarug {
             }
         }
 
+        //  private bool socket_event_handler (IOChannel source, IOCondition condition){
+        //      if (condition == IOCondition.HUP) {
+        //          // TODO: Handle connection lost
+        //          return false;
+        //      }
+
+        //      processReadEvent();
+        //  }
+
+        //  private void processReadEvent (){
+        //  }
+
         private Database active_db;
+        private IOChannel active_poll_chanel;
         private unowned ThreadPool<Worker> background;
     }
 }

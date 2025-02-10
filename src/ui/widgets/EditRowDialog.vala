@@ -70,7 +70,7 @@ namespace Tarug {
             }
 
             this.can_close = false;
-            yield this.tabledata_viewmodel.update_row (this.fields);
+            //  yield this.tabledata_viewmodel.update_row (this.fields);
 
             this.can_close = true;
             this.close();

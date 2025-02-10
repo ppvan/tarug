@@ -43,6 +43,7 @@ namespace Tarug {
         }
 
         private void load_data (owned Result result){
+            debug("Debug: begin load ata");
             assert_nonnull(result);
 
             rows = result.get_n_tuples();
@@ -92,8 +93,12 @@ namespace Tarug {
                         // assert_not_reached ();
                 }
 
+                debug("Do col");
+
                 headers.append(result.get_field_name(i));
             }
+
+            debug("Collect row");
 
             this.data = new Vec<Row>.with_capacity (rows);
 
@@ -104,6 +109,8 @@ namespace Tarug {
                 }
                 data.append(row);
             }
+
+            debug("Complete");
         }
 
         public Relation.Iterator iterator (){
