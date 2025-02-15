@@ -23,7 +23,9 @@ jobs:
           - 5432:5432
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-47
-      options: --privileged
+      options: >-
+        --privileged
+        --network host
     steps:
       - uses: actions/checkout@v4
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
