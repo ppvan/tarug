@@ -8,29 +8,27 @@ jobs:
     name: "Flatpak"
     runs-on: ubuntu-latest
     services:
-        postgres:
+      postgres:
         image: postgres
-
         env:
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_USER: postgres
-            POSTGRES_DB: postgres
-
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
         options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
-            - 5432:5432
+          - 5432:5432
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-47
       options: --privileged
     steps:
-    - uses: actions/checkout@v4
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-      with:
-        bundle: io.github.ppvan.tarug.flatpak
-        manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
-        cache-key: flatpak-builder-${{ github.sha }}
-        run-tests: true
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: io.github.ppvan.tarug.flatpak
+          manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+          run-tests: true
