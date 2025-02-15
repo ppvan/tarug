@@ -7,6 +7,10 @@ jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-47
+      options: >-
+        --privileged
     services:
       postgres:
         image: postgres
@@ -19,13 +23,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5432:5432
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-47
-      options: >-
-        --privileged
-        --network host
     steps:
       - uses: actions/checkout@v4
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
@@ -34,3 +31,7 @@ jobs:
           manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
           cache-key: flatpak-builder-${{ github.sha }}
           run-tests: true
+        env:
+          POSTGRES_HOST: postgres
+          # The default PostgreSQL port
+          POSTGRES_PORT: 5432

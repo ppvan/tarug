@@ -90,8 +90,12 @@ namespace Tarug {
         public string connection_string (int connection_timeout, int query_timeout){
             var ssl_mode = use_ssl ? "verify-full" : "disable";
             var options = @"\'-c statement_timeout=$(query_timeout * 1000)\'";
+            var res = Resolver.get_default ();
+            var adds = res.lookup_by_name (host, null);
 
-            var base_str = @"user=$user password=$password port=$port host=$host dbname=$database application_name=$(Config.APP_NAME) sslmode=$ssl_mode connect_timeout=$connection_timeout options=$options";
+            var host_addr = adds.nth_data (0).to_string ();
+
+            var base_str = @"user=$user password=$password port=$port hostaddr=$host_addr dbname=$database application_name=$(Config.APP_NAME) sslmode=$ssl_mode connect_timeout=$connection_timeout options=$options";
             var builder = new StringBuilder(base_str);
 
             if (use_ssl) {
