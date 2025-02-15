@@ -221,7 +221,7 @@ namespace Tarug {
             container.register(migration_service);
 
 
-            var sql_service = new SQLService(Application.background);
+            var sql_service = new SQLService();
             var schema_service = new SchemaService(sql_service);
             var connection_repo = new ConnectionRepository();
             var query_repo = new QueryRepository();

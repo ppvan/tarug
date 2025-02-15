@@ -2,7 +2,6 @@ namespace Tarug {
 
 
     public static void test_query_epoll() {
-        ThreadPool<Worker> background = null;
         var loop = new MainLoop();
 
         // Prepare dependency injecttion container.
@@ -10,35 +9,31 @@ namespace Tarug {
         var settings = new Settings(Config.APP_ID);
         container.register(settings);
 
-        try {
-            // Don't change the max_thread because libpq did not support many query with 1 connection.
-            background = new ThreadPool<Worker>.with_owned_data ((worker) => {
-                worker.run();
-            }, 1, false);
-        } catch (ThreadError err) {
-            debug(err.message);
-            assert_not_reached();
-        }
-
-        var sql_service = new SQLService(background);
+        var sql_service = new SQLService();
         var conn = new Connection("test conn") {
             host = "127.0.0.1",
             port = "5432",
             user = "jay_user",
             password = "jay_password",
-            database = "jay_db"
+            database = "dvdrental"
         };
 
         sql_service.connect_db.begin(conn, (obj, res) => {
+            var text = """SELECT ta.tablename, cls.reltuples::bigint AS estimate FROM pg_tables ta
+    JOIN pg_class cls ON cls.relname = ta.tablename 
+    WHERE schemaname=$1;""";
 
-            var query = new Query("SELECT 1;");
-            sql_service.exec_query.begin(query, (obj, res) => {
-                var relation = (Relation) sql_service.exec_query.end(res);
+            var query = new Query.with_params(text, {"public"});
+            sql_service.exec_query_params.begin(query, (obj, res) => {
+                var relation = (Relation) sql_service.exec_query_params.end(res);
+                sql_service.exec_query.begin(new Query("SELECT NOW()"), (obj, res) => {
+                    var relation2 = (Relation) sql_service.exec_query.end(res);
+                    printerr(relation.to_string());
+                    printerr(relation2.to_string());
+                    loop.quit();
+                });
 
-                printerr(relation.to_string());
-                loop.quit();
             });
-
         });
         loop.run();
     }
