@@ -80,7 +80,7 @@ namespace Tarug {
                 is_loading = false;
 
                 return(true);
-            } catch (tarugError err) {
+            } catch (TarugError err) {
                 this.err_msg = err.message;
             }
 

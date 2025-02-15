@@ -45,19 +45,19 @@ namespace Tarug {
             select_schema.begin(schemas[index]);
         }
 
-        public async void reload () throws tarugError {
+        public async void reload () throws TarugError {
             if (current_schema == null) {
                 return;
             }
             yield select_schema (current_schema);
         }
 
-        public async void logout () throws tarugError {
+        public async void logout () throws TarugError {
             current_schema = null;
             schemas.clear();
         }
 
-        private async void database_connected () throws tarugError {
+        private async void database_connected () throws TarugError {
             // auto load schema list.
             yield load_schemas ();
 
@@ -65,13 +65,13 @@ namespace Tarug {
         }
 
         /** Select current schema */
-        private async void select_schema (Schema schema) throws tarugError {
+        private async void select_schema (Schema schema) throws TarugError {
             debug("Select schema: %s", schema.name);
             current_schema = schema;
         }
 
         /** List schema from database. */
-        private async void load_schemas () throws tarugError {
+        private async void load_schemas () throws TarugError {
             var unload_schemas = yield schema_service.schema_list ();
 
             var public_first_schemas = new List<Schema> ();

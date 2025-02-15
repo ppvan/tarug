@@ -67,7 +67,7 @@ namespace Tarug {
 
                 is_loading = false;
                 debug("Rows: %d", current_relation.rows);
-            } catch (tarugError err) {
+            } catch (TarugError err) {
                 this.err_msg = err.message;
             }
         }

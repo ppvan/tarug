@@ -92,7 +92,7 @@ namespace Tarug {
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);
-            } catch (tarugError err) {
+            } catch (TarugError err) {
                 this.err_msg = err.message.dup();
                 debug("Error: %s", err.message);
                 this.current_state = State.ERROR;

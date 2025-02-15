@@ -5,7 +5,7 @@ namespace Tarug {
 
         public ExportService(){}
 
-        public async void export_csv (File dest, Relation relation) throws tarugError {
+        public async void export_csv (File dest, Relation relation) throws TarugError {
             string[] rows = new string[relation.rows + 1];
             string[] cols = new string[relation.cols];
 
@@ -30,7 +30,7 @@ namespace Tarug {
             try {
                 yield dest.replace_contents_bytes_async (bytes, null, false, FileCreateFlags.PRIVATE, null, null);
             } catch (GLib.Error err) {
-                throw new tarugError.EXPORT_ERROR(err.message);
+                throw new TarugError.EXPORT_ERROR(err.message);
             }
         }
 

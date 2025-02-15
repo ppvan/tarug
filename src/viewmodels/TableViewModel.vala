@@ -38,7 +38,7 @@ namespace Tarug {
             selected_table = tables[index];
         }
 
-        private async void load_tables (Schema schema) throws tarugError {
+        private async void load_tables (Schema schema) throws TarugError {
             debug("loading tables in %s", schema.name);
             var query = new Query.with_params(TABLE_LIST, { schema.name });
             var relation = yield sql_service.exec_query_params (query);

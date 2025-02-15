@@ -1,5 +1,5 @@
 namespace Tarug {
-    public errordomain tarugError {
+    public errordomain TarugError {
         CONNECTION_ERROR,
         QUERY_FAIL,
         PARSE_ERROR,

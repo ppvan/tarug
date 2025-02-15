@@ -27,7 +27,7 @@ namespace Tarug {
                     var s = new Schema(relation[i][0]);
                     list.append(s);
                 }
-            } catch (tarugError err) {
+            } catch (TarugError err) {
                 debug(err.message);
             }
 

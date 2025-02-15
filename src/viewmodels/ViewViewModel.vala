@@ -19,7 +19,7 @@ namespace Tarug {
 
             EventBus.instance().schema_changed.connect((schema) => {
                 views.clear();
-                load_views.begin(schema);
+                //  load_views.begin(schema);
             });
         }
 
@@ -57,14 +57,14 @@ namespace Tarug {
                 if (relation.rows > 0) {
                     return(relation[0][0]);
                 }
-            } catch (tarugError err) {
+            } catch (TarugError err) {
                 debug("Error: " + err.message);
             }
 
             return("Error: can't get view def for " + view_name);
         }
 
-        private async void load_views (Schema schema) throws tarugError {
+        private async void load_views (Schema schema) throws TarugError {
             debug("loading views");
             var query = new Query.with_params(VIEW_LIST, { schema.name });
             var relation = yield sql_service.exec_query_params (query);

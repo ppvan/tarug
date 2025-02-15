@@ -31,7 +31,7 @@ namespace Tarug {
             if (exit_status != 0) {
                 yield subprocess.communicate_utf8_async (null, null, null, out stderr_buf);
 
-                throw new tarugError.BACKUP_ERROR(stderr_buf);
+                throw new TarugError.BACKUP_ERROR(stderr_buf);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Tarug {
             if (exit_status != 0) {
                 yield subprocess.communicate_utf8_async (null, null, null, out stderr_buf);
 
-                throw new tarugError.BACKUP_ERROR(stderr_buf);
+                throw new TarugError.BACKUP_ERROR(stderr_buf);
             }
         }
     }
