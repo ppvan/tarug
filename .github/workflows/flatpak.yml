@@ -17,3 +17,4 @@ jobs:
         bundle: io.github.ppvan.tarug.flatpak
         manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
         cache-key: flatpak-builder-${{ github.sha }}
+        run-tests: true
