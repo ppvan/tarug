@@ -1,14 +1,30 @@
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
 name: Build flatpak
 jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
+    services:
+    postgres:
+      image: postgres
+
+      env:
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_DB: postgres
+
+      options: >-
+        --health-cmd pg_isready
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
+      ports:
+        - 5432:5432
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-46
+      image: bilelmoussaoui/flatpak-github-actions:gnome-47
       options: --privileged
     steps:
     - uses: actions/checkout@v4

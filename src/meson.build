@@ -146,18 +146,3 @@ executable(
     ],
     install: true,
 )
-
-
-tarug_sources_test = tarug_sources + files('cmd.vala')
-test(
-    'foo',
-   executable(
-    'tarug_test',
-    [tarug_resources, tarug_sources_test],
-    dependencies: tarug_deps,
-    vala_args: [
-        '--gresourcesdir=' + tarug_resources_dir,
-    ]
-   ),
-   protocol: 'tap',
-)

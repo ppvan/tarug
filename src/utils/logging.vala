@@ -4,9 +4,9 @@ namespace Tarug {
         var prog = GLib.Environment.get_prgname();
         GLib.on_error_stack_trace(prog);
 
-        Log.set_handler(Config.G_LOG_DOMAIN, LogLevelFlags.LEVEL_DEBUG | LogLevelFlags.LEVEL_WARNING, log_function);
         switch (debug_domain) {
             case Config.G_LOG_DOMAIN, "all":
+            Log.set_handler(Config.G_LOG_DOMAIN, LogLevelFlags.LEVEL_DEBUG | LogLevelFlags.LEVEL_WARNING, log_function);
                 break;
 
             default:

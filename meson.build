@@ -20,6 +20,7 @@ valac = meson.get_compiler('vala')
 subdir('data')
 subdir('resources')
 subdir('src')
+subdir('tests')
 subdir('po')
 
 # Using gnome module to do some task after the app is installed, like compile schema (settings data)
