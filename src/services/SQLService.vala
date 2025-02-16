@@ -107,6 +107,12 @@ namespace Tarug {
             }
         }
 
+        public void close_db() {
+            this.active_db = null;
+            this.active_chanel = null;
+            this.active_result = null;
+        }
+
         private void start_connect(string db_url) throws TarugError {
             active_db = Postgres.connect_start (db_url);
             var status = active_db.get_status ();

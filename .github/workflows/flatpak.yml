@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
 name: Build flatpak
 jobs:
@@ -8,12 +8,26 @@ jobs:
     name: "Flatpak"
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-46
-      options: --privileged
+      image: bilelmoussaoui/flatpak-github-actions:gnome-47
+      options: >-
+        --privileged
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-    - uses: actions/checkout@v4
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-      with:
-        bundle: io.github.ppvan.tarug.flatpak
-        manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
-        cache-key: flatpak-builder-${{ github.sha }}
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: io.github.ppvan.tarug.flatpak
+          manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+          run-tests: true

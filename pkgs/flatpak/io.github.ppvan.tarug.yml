@@ -1,6 +1,6 @@
 app-id: io.github.ppvan.tarug
 runtime: org.gnome.Platform
-runtime-version: '47'
+runtime-version: "47"
 sdk: org.gnome.Sdk
 
 sdk-extensions:
@@ -26,11 +26,16 @@ cleanup:
   - /share/man
   - /share/pkgconfig
   - /share/vala
-  - '*.la'
-  - '*.a'
+  - "*.la"
+  - "*.a"
 modules:
   - name: tarug
     buildsystem: meson
+    build-options:
+      test-args:
+        - "--socket=x11"
+        - "--share=network"
+        - "--env=POSTGRES_HOST=postgres"
     sources:
       - type: dir
         path: ../../
@@ -42,7 +47,7 @@ modules:
             url: https://gitlab.gnome.org/jwestman/blueprint-compiler
             tag: v0.14.0
         cleanup:
-          - '*'
+          - "*"
       - name: postgresql-libs
         buildsystem: simple
         build-commands:

@@ -4,19 +4,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Compile",
+            "label": "Meson (Flatpak): Run Unit test",
             "type": "shell",
-            "command": "meson compile -C build",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "Setup",
-            "type": "shell",
-            "command": "meson setup build --reconfigure",
+            "options": {
+                // Match meson buildPath
+                "cwd": "${workspaceFolder}/_build"
+            },
+            "group": "test",
+            // mesonbuild.mesonPath
+            "command": "${workspaceFolder}/.flatpak/meson.sh test",
         }
     ]
 }
