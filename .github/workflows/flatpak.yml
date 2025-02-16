@@ -11,6 +11,10 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:gnome-47
       options: >-
         --privileged
+      env:
+        POSTGRES_HOST: postgres
+        # The default PostgreSQL port
+        POSTGRES_PORT: 5432
     services:
       postgres:
         image: postgres
@@ -31,7 +35,3 @@ jobs:
           manifest-path: pkgs/flatpak/io.github.ppvan.tarug.yml
           cache-key: flatpak-builder-${{ github.sha }}
           run-tests: true
-        env:
-          POSTGRES_HOST: postgres
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432

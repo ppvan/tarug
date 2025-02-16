@@ -7,7 +7,7 @@ void test_connect_db_ok (){
     var waiter = new AsyncResultWaiter(main_loop);
     var sql_service = new SQLService();
     var conn = new Connection("test conn") {
-        host = Environment.get_variable ("POSTGRES_HOST") ?? "postgres",
+        host = Environment.get_variable ("POSTGRES_HOST") ?? "127.0.0.1",
         port = "5432",
         user = "postgres",
         password = "postgres",
