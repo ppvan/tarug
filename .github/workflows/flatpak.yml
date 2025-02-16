@@ -11,9 +11,6 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:gnome-47
       options: >-
         --privileged
-      env:
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: 5432
     services:
       postgres:
         image: postgres
