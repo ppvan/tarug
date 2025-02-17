@@ -180,7 +180,7 @@ namespace Tarug {
 
             foreach (var item in keywords) {
                 var propose_query = cur_stmt.strip() + " " + item.value;
-                if (PGQuery.split_statement(propose_query, true) != null) {
+                if (is_sql_query (propose_query)) {
                     final.append(item);
                 }
             }

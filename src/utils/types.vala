@@ -60,6 +60,11 @@ namespace Tarug {
         return local_time;
     }
 
+    public bool is_sql_query(string input) {
+        var result = PgQuery.parse(input);
+        return result.error == null;
+    }
+
     public class Vec<T>: Object {
         static int DEFAULT_CAPACITY = 64;
 
