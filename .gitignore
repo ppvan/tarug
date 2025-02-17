@@ -13,3 +13,5 @@ subprojects/*
 *.flatpak
 *.dot
 io.github.ppvan.tarug.flatpak
+
+.vscode/*

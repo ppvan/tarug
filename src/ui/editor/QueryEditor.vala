@@ -133,11 +133,18 @@ namespace Tarug {
         }
 
         private void highlight_current_query (){
-            var stmts = PGQuery.split_statement(buffer.text);
+            var raw_query = buffer.text;
+            var stmts = PgQuery.split_with_scanner(raw_query);
             this.clear_highlight();
-            stmts.foreach((token) => {
-                var start = token.location;
-                var end = token.location + token.statement.length;
+
+            for (var i = 0; i < stmts.n_stmts; i++) {
+                if (stmts.error != null) {
+                    return;
+                }
+                var current_statement = stmts.stmts[i];
+
+                var start = current_statement->stmt_location;
+                var end = start + current_statement->stmt_len;
 
                 // debug ("[%d, %d], %s", token.location, token.end, token.value);
 
@@ -154,7 +161,7 @@ namespace Tarug {
                 if (start < buffer.cursor_position && buffer.cursor_position <= end + 1) {
                     // Double-check with strict mode.
                     string statement = buffer.get_text(iter1, iter2, false);
-                    if (PGQuery.split_statement(statement, true) == null) {
+                    if (!is_sql_query(statement)) {
                         return;
                     }
 
@@ -165,13 +172,12 @@ namespace Tarug {
                         buffer.apply_tag_by_name(LIGHT_TAG, iter1, iter2);
                     }
 
-                    // Important
-                    query_viewmodel.selected_query_changed(token.statement);
+                    query_viewmodel.selected_query_changed(statement);
                 } else {
                     buffer.remove_tag_by_name(DARK_TAG, iter1, iter2);
                     buffer.remove_tag_by_name(LIGHT_TAG, iter1, iter2);
                 }
-            });
+            }
         }
 
         private inline void clear_highlight (){
