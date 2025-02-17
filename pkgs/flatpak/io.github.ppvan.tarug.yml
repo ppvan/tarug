@@ -69,8 +69,13 @@ modules:
             url: https://github.com/pganalyze/libpg_query
             tag: 17-6.0.0
       - name: libcsv
-        buildsystem: meson
+        buildsystem: simple
+        build-commands:
+          - ./configure --prefix=/app
+          - make
+          - make check
+          - make install
         sources:
-          - type: git
-            url: https://github.com/ppvan/libcsv
-            commit: c8f01b8b4aa8d8156a624405b8a4c646e3f6efaa
+          - type: archive
+            url: http://deb.debian.org/debian/pool/main/libc/libcsv/libcsv_3.0.3+dfsg.orig.tar.gz
+            sha256: 06fddfaca720a4be7603bad63eb1833bca5b6c5a69b42b1c518a02cda2a73aef
