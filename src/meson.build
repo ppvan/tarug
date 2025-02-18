@@ -86,6 +86,8 @@ configure_file(output: 'config.h', configuration: conf)
 
 cc = meson.get_compiler('c')
 math_dep = cc.find_library('m', required: false)
+pg_query_dep = cc.find_library('pg_query', has_headers: ['pg_query.h'])
+csv_dep = cc.find_library('csv', has_headers: ['csv.h'])
 
 tarug_deps = [
     # assume exists typical gtk system
@@ -96,10 +98,10 @@ tarug_deps = [
     dependency('gee-0.8'),
     dependency('gtksourceview-5', version: '>= 5.0'),
     dependency('libpq', version: '>= 15.3'),
-    math_dep,
     dependency('sqlite3'),
-    dependency('pgquery-vala'),
-    cc.find_library('csv', has_headers: ['csv.h'], required: true),
+    math_dep,
+    csv_dep,
+    pg_query_dep,
     valac.find_library('config', dirs: vapi_dir),
 ]
 
@@ -109,6 +111,8 @@ add_project_arguments(
         '--vapidir', vapi_dir,
         '--gresourcesdir', tarug_resources_dir,
         '--enable-deprecated',
+        # IIUC, cc.find_library will not intergrate with vala compiler, hence the custom --pkg option
+        '--pkg', 'pg_query',
         '--pkg', 'csv'
     ],
     language: 'vala',
