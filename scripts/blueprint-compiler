@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+SCRIPT_PATH="$(dirname -- "${BASH_SOURCE[0]}")"
+
+flatpak build --with-appdir --allow=devel "${SCRIPT_PATH}"/../.flatpak/repo /app/bin/blueprint-compiler "$@"
