@@ -24,40 +24,16 @@ I often use the dvdrental sample db when develop and test tarug.
 
 ### 3. Build Tarug
 
-- Install Flatpak Intergration for VScode [extension](https://github.com/bilelmoussaoui/flatpak-vscode)
-- Open VScode commmand prompt (Ctr+Shift+P/Cmd+Shift+P) type: "Flatpak: Select or change manifest", make sure it's io.github.ppvan.tarug
-- Open the prompt again and type "Flatpak: Build and Run"
-- Start patching!!
-
-
-### 4. Trouble shooting
-
-If you got error something like: `org.gnome.Sdk/*unspecified*/47 not installed`. Install required runtime and sdk.
-
-```sh
-flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47 org.freedesktop.Sdk.Extension.vala//24.08
+```
+make build run
 ```
 
-If you do not see syntax hightlight or meson error, check your local .vscode setting:: `.vscode/settings.json`. It should be update by the flatpak extension to something like:
+> If you got error something like: `org.gnome.Sdk/*unspecified*/47 not installed`. Install required runtime and sdk.
+    ```sh
+    flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47 org.freedesktop.Sdk.Extension.vala//24.08
+    ```
 
-```json
-{
-    "mesonbuild.configureOnOpen": false,
-    "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true,
-        "**/.hg/store/**": true,
-        ".flatpak/**": true,
-        "_build/**": true
-    },
-    "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh",
-    "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh",
-    "mesonbuild.buildFolder": "_build",
-    "C_Cpp.default.compileCommands": "/home/ppvan/Documents/code/github/tarug/_build/compile_commands.json",
-    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
-}
-```
-
+Try edit `resources/gtk/connection-view.blp:200` label from "Connect with Tarug" to "Hello world". Build the project again to see the change
 
 ## Project structure
 

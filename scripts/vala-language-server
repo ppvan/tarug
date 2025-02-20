@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+# Change your editor language-server-path to this script to get better intellisense.
+
+SCRIPT_PATH="$(dirname -- "${BASH_SOURCE[0]}")"
+
+flatpak build --with-appdir --allow=devel "${SCRIPT_PATH}"/../.flatpak/repo /usr/lib/sdk/vala/bin/vala-language-server "$@"
