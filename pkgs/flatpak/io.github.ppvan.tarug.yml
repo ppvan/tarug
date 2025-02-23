@@ -59,6 +59,12 @@ modules:
           - type: archive
             url: https://ftp.postgresql.org/pub/source/v17.0/postgresql-17.0.tar.bz2
             sha256: 7e276131c0fdd6b62588dbad9b3bb24b8c3498d5009328dba59af16e819109de
+      - name: libssh2
+        buildsystem: autotools
+        sources:
+          - type: archive
+            url: https://libssh2.org/download/libssh2-1.11.1.tar.bz2
+            sha256: 8ddbd698403a2c3a9987df48f2940c6f6a9bddce28d37eb201938dd7755646f0
       - name: libpg_query
         buildsystem: simple
         build-commands:
