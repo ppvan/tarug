@@ -19,6 +19,7 @@ tarug_sources = files(
     'services/SQLService.vala',
     'services/SchemaService.vala',
     'services/StorageService.vala',
+    'services/SSHTunnelService.vala',
     'utils/Event.vala',
     'utils/ObservableList.vala',
     'utils/ValueConverter.vala',
@@ -98,6 +99,7 @@ tarug_deps = [
     dependency('gee-0.8'),
     dependency('gtksourceview-5', version: '>= 5.0'),
     dependency('libpq', version: '>= 15.3'),
+    dependency('libssh2'),
     dependency('sqlite3'),
     math_dep,
     csv_dep,
@@ -113,7 +115,8 @@ add_project_arguments(
         '--enable-deprecated',
         # IIUC, cc.find_library will not intergrate with vala compiler, hence the custom --pkg option
         '--pkg', 'pg_query',
-        '--pkg', 'csv'
+        '--pkg', 'csv',
+        '--pkg', 'posix'
     ],
     language: 'vala',
 )
