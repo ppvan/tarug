@@ -135,20 +135,29 @@ namespace Tarug {
             }
         }
 
-        public Channel direct_tcpip (string host, int port, string shost, int sport){
+        public async Channel direct_tcpip (string host, int port, string shost, int sport){
             var raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
 
             while (raw_session.last_error == SSH2.Error.AGAIN) {
-                raw_channel = raw_session.direct_tcpip("127.0.0.1", 5432, "127.0.0.1", 9000);
-                conn.get_socket().condition_wait(raw_session.block_directions.to_condition());
+                raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
+                var block_directions = raw_session.block_directions.to_condition ();
+                yield wait_socket (block_directions);
             }
 
 
             return new Channel(this, (owned) raw_channel);
         }
 
-        public void wait_socket (IOCondition condition){
-            conn.get_socket().condition_wait(condition);
+        public async void wait_socket(IOCondition condition) {
+            var socket = conn.get_socket();
+            var source = socket.create_source(condition, null);
+            source.set_callback(() => {
+                wait_socket.callback();
+    
+                return false;
+            });
+            source.attach();
+            yield;
         }
     }
 
@@ -194,7 +203,7 @@ namespace Tarug {
             var shost = src.get_hostname();
             var sport = src.get_port();
 
-            var channel = session.direct_tcpip(host, port, shost, sport);
+            var channel = yield session.direct_tcpip(host, port, shost, sport);
 
             while (!conn.is_closed()) {
                 var client_msg = yield read_request (input);
