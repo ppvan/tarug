@@ -40,6 +40,7 @@ namespace Tarug {
         }
 
         public async Bytes read (){
+            print("read channel\n");
             var buf = new uint8[1024];
             size_t bytes_write = SSH2.Error.AGAIN;
             do {
@@ -56,6 +57,8 @@ namespace Tarug {
         }
 
         public async void write (Bytes content){
+            print("write channel\n");
+
             size_t wr = 0;
             size_t i = 0;
             size_t len = content.length;
@@ -204,9 +207,11 @@ namespace Tarug {
             var sport = src.get_port();
 
             var channel = yield session.direct_tcpip(host, port, shost, sport);
+            var is_new = true;
 
             while (!conn.is_closed()) {
-                var client_msg = yield read_request (input);
+                var client_msg = yield read_request (input, is_new);
+                is_new = false;
 
                 yield channel.write (client_msg);
 
@@ -221,6 +226,7 @@ namespace Tarug {
         }
 
         private async void write_response (OutputStream stream, Bytes bytes){
+            print("write client\n");
             size_t i = 0;
             size_t wr = 0;
             size_t len = bytes.length;
@@ -233,50 +239,29 @@ namespace Tarug {
             } while (i > 0 && wr < len);
         }
 
-        private async Bytes read_request (InputStream stream){
-            var content = yield stream.read_bytes_async (10240, Priority.DEFAULT, null);
+        private async Bytes read_request (InputStream stream, bool is_new){
+            print("read client\n");
 
-            return content;
+            uint32 expected_header_bytes = (is_new ? 4 : 5);
+            uint8[] buf = new uint8[expected_header_bytes];
+            var bytes_read = yield stream.read_async (buf, Priority.DEFAULT);
+            assert (bytes_read == expected_header_bytes);
+
+            uint32 message_len_network = *((uint32*)&buf[(is_new ? 0 : 1)]);
+            var message_length = uint32.from_network(message_len_network);
+            print("mes len: %lu\n", message_length);
+
+            uint8[] body_buf = new uint8[message_length - expected_header_bytes];
+
+            var content = yield stream.read_async (body_buf, Priority.DEFAULT);
+
+            print("command: %s\n", (string)(body_buf));
+
+            var package_data = new uint8[message_length];
+            GLib.Memory.copy (package_data, buf, expected_header_bytes);
+            GLib.Memory.copy (&package_data[expected_header_bytes], body_buf, message_length - expected_header_bytes);
+
+            return new Bytes.take (package_data);
         }
-
-    //      public static void main (string[] args){
-
-    //          /*
-    //             Forward a local service to remote service.
-    //             TCP Client [--> localhost:port --> SSH server -->] TCP server.
-    //                      [--> (3)...............--> (2).....--> (1) ........]
-    //             TCP server will see the request as if it is from SSH server.
-    //             TCP client will see the localhost:port as the TCP server.
-    //           */
-    //          // Localsocket -> SSH host -> remote host
-
-    //          // SSH (1) info
-    //          string username = "ppvan";
-    //          string password = "ubuntu";
-    //          string server_ip = "127.0.0.1";
-    //          uint16 server_port = 22;
-
-    //          string remote_host = "localhost";
-    //          uint16 remote_port = 5432;
-    //          uint16 local_destport = 9000;
-
-    //          var server = new NetworkAddress(server_ip, server_port);
-    //          var local = new NetworkAddress.loopback(local_destport);
-    //          var remote = new NetworkAddress(remote_host, remote_port);
-
-
-    //          var auth = new Auth.password_auth(username, password);
-    //          var session = new Session(server);
-    //          session.authenticate(auth);
-
-
-    //          // Connect and auth session
-
-    //          var tunnel = new SSHTunel(session, local, remote);
-    //          var loop = new MainLoop();
-
-    //          tunnel.listen();
-    //          loop.run();
-    //      }
     }
 }
