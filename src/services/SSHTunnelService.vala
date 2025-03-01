@@ -40,20 +40,23 @@ namespace Tarug {
         }
 
         public async Bytes read (){
-            print("read channel\n");
-            var buf = new uint8[1024];
-            size_t bytes_write = SSH2.Error.AGAIN;
-            do {
-                bytes_write = raw_channel.read(buf);
-                if (bytes_write != SSH2.Error.AGAIN)break;
-                session.wait_socket(GLib.IOCondition.IN);
-            } while (bytes_write == SSH2.Error.AGAIN);
+            var header = new uint8[5];
+            ssize_t expected_len = raw_channel.read(header);
+            if (expected_len == SSH2.Error.AGAIN) {
+                return new Bytes(null);
+            }
+
+            ssize_t len = SSHTunel.network_bytes_to_uint32 (&header[1]);
+
+            var buf = new uint8[len - 4];
+            raw_channel.read(buf);
 
             if (raw_channel.eof() == EOF) {
                 return new Bytes(buf).slice(0, 0);
             }
 
-            return new Bytes(buf).slice(0, bytes_write);
+            var total = SSHTunel.concat_bytes (header, buf);
+            return new Bytes.take (total);
         }
 
         public async void write (Bytes content){
@@ -68,6 +71,7 @@ namespace Tarug {
                 i = raw_channel.write(chunk);
                 wr += i;
             } while (i > 0 && wr < len);
+            print("end write\n"); 
         }
     }
 
@@ -80,7 +84,6 @@ namespace Tarug {
             AUTHENTICATED
         }
 
-        public signal void data_available ();
 
         private SSH2.Session<bool> raw_session;
         private SocketConnectable ssh_server;
@@ -140,6 +143,7 @@ namespace Tarug {
 
         public async Channel direct_tcpip (string host, int port, string shost, int sport){
             var raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
+            raw_session.blocking = false;
 
             while (raw_session.last_error == SSH2.Error.AGAIN) {
                 raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
@@ -161,6 +165,11 @@ namespace Tarug {
             });
             source.attach();
             yield;
+        }
+
+        public bool is_readable() {
+            var socket = conn.get_socket();
+            return socket.condition_check (IOCondition.IN) == IOCondition.IN;
         }
     }
 
@@ -210,30 +219,36 @@ namespace Tarug {
             var is_new = true;
 
             while (!conn.is_closed()) {
+
                 var client_msg = yield read_message (input, is_new);
                 is_new = false;
-
+                if (client_msg.length == 0) break;
                 yield channel.write (client_msg);
 
-                var response = yield channel.read ();
-
-                if (response.length == 0) {
-                    break;
+                yield session.wait_socket (GLib.IOCondition.IN);
+                while (true) {
+                    var response = yield channel.read ();
+                    if (response.length == 0) {
+                        print("oef");
+                        break;
+                    }
+                    yield write_response (output, response);
+                    print("end\n");
                 }
-
-                yield write_response (output, response);
             }
         }
 
         private async void write_response (OutputStream stream, Bytes bytes){
             print("write client\n");
-            size_t i = 0;
-            size_t wr = 0;
-            size_t len = bytes.length;
+            ssize_t i = 0;
+            ssize_t wr = 0;
+            ssize_t len = bytes.length;
 
             do {
                 var chunk = new Bytes.from_bytes(bytes, wr, len - wr);
                 i = yield stream.write_bytes_async (chunk);
+
+                print("i: %lld\n", i);
 
                 wr += i;
             } while (i > 0 && wr < len);
@@ -242,7 +257,12 @@ namespace Tarug {
         private async Bytes read_message(InputStream input, bool is_first = false) {
             uint32 header_length = (is_first ? 4 : 5);
             uint8[] header_buffer = new uint8[header_length];
-            yield input.read_async (header_buffer, Priority.DEFAULT);
+            print("begin read\n");
+            ssize_t actual = yield input.read_async (header_buffer, Priority.DEFAULT);
+            print("actual: %lld\n", actual);
+            if (actual <= 0) {
+                return new Bytes(null);
+            }
 
             int offset = is_first ? 0 : 1;
             uint32 message_length = network_bytes_to_uint32 (&header_buffer[offset]);
@@ -260,12 +280,12 @@ namespace Tarug {
             return new Bytes.take (package_data);
         }
 
-        private static uint32 network_bytes_to_uint32(uint8* raw_bytes) {
+        public static uint32 network_bytes_to_uint32(uint8* raw_bytes) {
             uint32 network_val = *((uint32*)raw_bytes);
             return uint32.from_network(network_val);
         }
 
-        private static uint8[] concat_bytes(uint8[] first, uint8[] second) {
+        public static uint8[] concat_bytes(uint8[] first, uint8[] second) {
             uint8[] total = new uint8[first.length + second.length];
 
             GLib.Memory.copy (total, first, first.length);
