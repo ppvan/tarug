@@ -51,20 +51,20 @@ namespace Tarug {
             var buf = new uint8[len - 4];
             raw_channel.read(buf);
 
-            if (raw_channel.eof() == EOF) {
-                return new Bytes(buf).slice(0, 0);
-            }
-
             var total = SSHTunel.concat_bytes (header, buf);
             return new Bytes.take (total);
+        }
+
+        public bool eof() {
+            return raw_channel.eof() == EOF;
         }
 
         public async void write (Bytes content){
             print("write channel\n");
 
-            size_t wr = 0;
-            size_t i = 0;
-            size_t len = content.length;
+            ssize_t wr = 0;
+            ssize_t i = 0;
+            ssize_t len = content.length;
 
             do {
                 uint8[] chunk = content.slice(wr, len - wr).get_data();
@@ -72,6 +72,11 @@ namespace Tarug {
                 wr += i;
             } while (i > 0 && wr < len);
             print("end write\n"); 
+        }
+
+        public void close() {
+            raw_channel.close ();
+            raw_channel.wait_closed ();
         }
     }
 
@@ -143,14 +148,15 @@ namespace Tarug {
 
         public async Channel direct_tcpip (string host, int port, string shost, int sport){
             var raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
-            raw_session.blocking = false;
-
             while (raw_session.last_error == SSH2.Error.AGAIN) {
                 raw_channel = raw_session.direct_tcpip(host, port, shost, sport);
-                var block_directions = raw_session.block_directions.to_condition ();
-                yield wait_socket (block_directions);
+                if (raw_channel != null) {
+                    debug("Connected to chanel");
+                    break;
+                }
+                conn.socket.condition_wait (IOCondition.IN);
             }
-
+            raw_session.blocking = false;
 
             return new Channel(this, (owned) raw_channel);
         }
@@ -170,6 +176,17 @@ namespace Tarug {
         public bool is_readable() {
             var socket = conn.get_socket();
             return socket.condition_check (IOCondition.IN) == IOCondition.IN;
+        }
+
+        public string get_error_message() {
+            char[] msg = null;
+            SSH2.Error err = raw_session.get_last_error (out msg);
+
+            for (int i = 0; i < msg.length; i++) {
+                debug("%c", msg[i]);
+            }
+
+            return "";
         }
     }
 
@@ -207,6 +224,7 @@ namespace Tarug {
         }
 
         private async void process_incoming (SocketConnection conn){
+            debug("Accept connection");
             var input = new DataInputStream(conn.input_stream);
             var output = new DataOutputStream(conn.output_stream);
 
@@ -217,29 +235,45 @@ namespace Tarug {
 
             var channel = yield session.direct_tcpip(host, port, shost, sport);
             var is_new = true;
+            var socket = conn.get_socket ();
 
             while (!conn.is_closed()) {
-
-                var client_msg = yield read_message (input, is_new);
-                is_new = false;
-                if (client_msg.length == 0) break;
-                yield channel.write (client_msg);
-
-                yield session.wait_socket (GLib.IOCondition.IN);
-                while (true) {
-                    var response = yield channel.read ();
-                    if (response.length == 0) {
-                        print("oef");
+                debug("Begin conversation");
+                try {
+                    socket.condition_timed_wait (IOCondition.IN, -1);
+                    var client_msg = yield read_message (input, is_new);
+                    is_new = false;
+                    if (client_msg.length == 0) {
+                        debug ("Client disconected\n");
                         break;
                     }
-                    yield write_response (output, response);
-                    print("end\n");
+                    yield channel.write (client_msg);
+
+                    yield session.wait_socket (IOCondition.IN);
+                    while (true) {
+                        var response = yield channel.read ();
+                        if (response.length == 0) {
+                            debug("Server say nothing, left\n");
+                            break;
+                        }
+                        yield write_response (output, response);
+                        if (channel.eof()) {
+                            yield conn.close_async (Priority.DEFAULT);
+                        }
+                    }
+
+                } catch (Error err) {
+                    debug("Broken pipe");
+                    debug ("error: %s", err.message);
+                    conn.close();
+                    channel.close();
                 }
             }
+
+            debug("closed connection");
         }
 
-        private async void write_response (OutputStream stream, Bytes bytes){
-            print("write client\n");
+        private async void write_response (OutputStream stream, Bytes bytes) throws Error{
             ssize_t i = 0;
             ssize_t wr = 0;
             ssize_t len = bytes.length;
@@ -247,35 +281,35 @@ namespace Tarug {
             do {
                 var chunk = new Bytes.from_bytes(bytes, wr, len - wr);
                 i = yield stream.write_bytes_async (chunk);
-
-                print("i: %lld\n", i);
-
                 wr += i;
             } while (i > 0 && wr < len);
         }
 
-        private async Bytes read_message(InputStream input, bool is_first = false) {
+        private async Bytes read_message(InputStream input, bool is_first = false) throws Error {
+
+            debug("Reading message header: ");
             uint32 header_length = (is_first ? 4 : 5);
             uint8[] header_buffer = new uint8[header_length];
-            print("begin read\n");
             ssize_t actual = yield input.read_async (header_buffer, Priority.DEFAULT);
-            print("actual: %lld\n", actual);
+
+            debug("Read %lld as expected %lld", actual, header_length);
             if (actual <= 0) {
                 return new Bytes(null);
             }
 
             int offset = is_first ? 0 : 1;
             uint32 message_length = network_bytes_to_uint32 (&header_buffer[offset]);
+            if (message_length <= 4) {
+                return new Bytes(null);
+            }
 
+            debug("Got message length: %lld, readding body", message_length);
 
             uint8[] body_buffer = new uint8[message_length - 4];
-            yield input.read_async (body_buffer, Priority.DEFAULT);
-
+            ssize_t read_bytes = yield input.read_async (body_buffer, Priority.DEFAULT);
+            debug("Got %lld bytes", read_bytes);
 
             uint8[] package_data = concat_bytes (header_buffer, body_buffer);
-
-            print ("message length: %llu\n", message_length);
-            print ("header: %llu, body: %llu, total: %llu\n", header_buffer.length, body_buffer.length, package_data.length);
 
             return new Bytes.take (package_data);
         }
