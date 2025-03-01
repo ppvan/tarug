@@ -106,7 +106,7 @@ lsp:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/lib/sdk/vala/bin/vala-language-server
 
 meson:
-	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson
+	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/bash
 
 test:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson test -C $(BUILD_DIR)

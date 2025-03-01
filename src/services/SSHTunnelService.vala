@@ -210,7 +210,7 @@ namespace Tarug {
             var is_new = true;
 
             while (!conn.is_closed()) {
-                var client_msg = yield read_request (input, is_new);
+                var client_msg = yield read_message (input, is_new);
                 is_new = false;
 
                 yield channel.write (client_msg);
@@ -239,29 +239,39 @@ namespace Tarug {
             } while (i > 0 && wr < len);
         }
 
-        private async Bytes read_request (InputStream stream, bool is_new){
-            print("read client\n");
+        private async Bytes read_message(InputStream input, bool is_first = false) {
+            uint32 header_length = (is_first ? 4 : 5);
+            uint8[] header_buffer = new uint8[header_length];
+            yield input.read_async (header_buffer, Priority.DEFAULT);
 
-            uint32 expected_header_bytes = (is_new ? 4 : 5);
-            uint8[] buf = new uint8[expected_header_bytes];
-            var bytes_read = yield stream.read_async (buf, Priority.DEFAULT);
-            assert (bytes_read == expected_header_bytes);
+            int offset = is_first ? 0 : 1;
+            uint32 message_length = network_bytes_to_uint32 (&header_buffer[offset]);
 
-            uint32 message_len_network = *((uint32*)&buf[(is_new ? 0 : 1)]);
-            var message_length = uint32.from_network(message_len_network);
-            print("mes len: %lu\n", message_length);
 
-            uint8[] body_buf = new uint8[message_length - expected_header_bytes];
+            uint8[] body_buffer = new uint8[message_length - 4];
+            yield input.read_async (body_buffer, Priority.DEFAULT);
 
-            var content = yield stream.read_async (body_buf, Priority.DEFAULT);
 
-            print("command: %s\n", (string)(body_buf));
+            uint8[] package_data = concat_bytes (header_buffer, body_buffer);
 
-            var package_data = new uint8[message_length];
-            GLib.Memory.copy (package_data, buf, expected_header_bytes);
-            GLib.Memory.copy (&package_data[expected_header_bytes], body_buf, message_length - expected_header_bytes);
+            print ("message length: %llu\n", message_length);
+            print ("header: %llu, body: %llu, total: %llu\n", header_buffer.length, body_buffer.length, package_data.length);
 
             return new Bytes.take (package_data);
+        }
+
+        private static uint32 network_bytes_to_uint32(uint8* raw_bytes) {
+            uint32 network_val = *((uint32*)raw_bytes);
+            return uint32.from_network(network_val);
+        }
+
+        private static uint8[] concat_bytes(uint8[] first, uint8[] second) {
+            uint8[] total = new uint8[first.length + second.length];
+
+            GLib.Memory.copy (total, first, first.length);
+            GLib.Memory.copy (&total[first.length], second, second.length);
+
+            return total;
         }
     }
 }
