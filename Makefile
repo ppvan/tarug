@@ -72,7 +72,7 @@ configure: build-deps
 	--filesystem=$(PWD)/$(REPO_DIR) \
 	--filesystem=$(PWD)/$(BUILD_DIR) \
 	$(REPO_DIR) \
-	meson setup $(BUILD_DIR)
+	meson setup --prefix /app $(BUILD_DIR)
 
 build: configure
 	flatpak build \
@@ -105,7 +105,7 @@ bundle: build
 lsp:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/lib/sdk/vala/bin/vala-language-server
 
-meson:
+shell:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/bash
 
 test:
