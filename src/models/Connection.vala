@@ -34,6 +34,7 @@ namespace Tarug {
         public string password { get; set; default = "postgres"; }
         public string database { get; set; default = "postgres"; }
         public bool use_ssl { get; set; default = false; }
+        public bool use_ssh { get; set; default = false; }
 
         public string options { get; set; default = DEFAULT; }
 

@@ -20,6 +20,7 @@ namespace Tarug {
         public string err_msg { get; private set; default = "hello world"; }
         public ObservableList<Connection> connections { get; private set; default = new ObservableList<Connection> (); }
         public Connection ? selected_connection { get; set; }
+        public SSHTunel tunnel;
 
         /** True when trying to establish a connection util know results. */
         public bool is_connectting { get; set; default = false; }
@@ -89,6 +90,29 @@ namespace Tarug {
         public async void active_connection (Connection connection){
             this.current_state = State.CONNECTING;
             try {
+                string username = "ppvan";
+                string password = "ubuntu";
+                string server_ip = "127.0.0.1";
+                uint16 server_port = 22;
+
+                string remote_host = "localhost";
+                uint16 remote_port = 5432;
+                uint16 local_destport = 9000;
+
+                var server = new NetworkAddress(server_ip, server_port);
+                var local = new NetworkAddress.loopback(local_destport);
+                var remote = new NetworkAddress(remote_host, remote_port);
+
+
+                var auth = new Auth.password_auth(username, password);
+                var session = new Session(server);
+                session.authenticate(auth);
+
+
+                // Connect and auth session
+
+                this.tunnel = new SSHTunel(session, local, remote);
+                this.tunnel.listen ();
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);

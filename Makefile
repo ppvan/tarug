@@ -95,6 +95,7 @@ install: build
 run: install
 	flatpak build \
 	$(RUNNER_FLAGS) \
+	--env=G_MESSAGES_DEBUG=all \
 	$(REPO_DIR) tarug
 
 bundle: build

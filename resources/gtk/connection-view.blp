@@ -378,6 +378,35 @@ template $TarugConnectionView: Adw.Bin {
                                         }
                                     }
 
+                                    Label {
+                                        label: "SSH:";
+                                        halign: end;
+
+                                        layout {
+                                            row: 6;
+                                            column: 0;
+                                            column-span: 3;
+                                        }
+                                    }
+
+                                    Box {
+                                        orientation: horizontal;
+
+                                        Box {
+                                            valign: center;
+                                            orientation: vertical;
+
+                                            Switch ssh_switch {
+                                                activate => $on_switch_changed();
+                                            }
+                                        }
+
+                                        layout {
+                                            row: 6;
+                                            column: 3;
+                                        }
+                                    }
+
                                     Box {
                                         visible: bind ssl_switch.active;
                                         orientation: vertical;

@@ -39,7 +39,7 @@ namespace Tarug {
             this.raw_channel.close();
         }
 
-        public async Bytes read (){
+        public Bytes read (){
             var header = new uint8[5];
             ssize_t expected_len = raw_channel.read(header);
             if (expected_len == SSH2.Error.AGAIN) {
@@ -59,7 +59,7 @@ namespace Tarug {
             return raw_channel.eof() == EOF;
         }
 
-        public async void write (Bytes content){
+        public void write (Bytes content){
             print("write channel\n");
 
             ssize_t wr = 0;
@@ -166,7 +166,6 @@ namespace Tarug {
             var source = socket.create_source(condition, null);
             source.set_callback(() => {
                 wait_socket.callback();
-    
                 return false;
             });
             source.attach();
@@ -240,23 +239,33 @@ namespace Tarug {
             while (!conn.is_closed()) {
                 debug("Begin conversation");
                 try {
-                    socket.condition_timed_wait (IOCondition.IN, -1);
-                    var client_msg = yield read_message (input, is_new);
+                    debug ("socket 1: %s", socket.condition_check (IOCondition.IN).to_string());
+                    yield wait_socket_2(socket, IOCondition.IN);
+                    debug ("socket 2: %s", socket.condition_check (IOCondition.IN).to_string());
+                    var client_msg = yield dump_read (input);
+                    debug ("socket 3: %s", socket.condition_check (IOCondition.IN).to_string());
+
                     is_new = false;
                     if (client_msg.length == 0) {
                         debug ("Client disconected\n");
                         break;
                     }
-                    yield channel.write (client_msg);
+                    channel.write (client_msg);
 
                     yield session.wait_socket (IOCondition.IN);
+                    debug ("done");
                     while (true) {
-                        var response = yield channel.read ();
+                        debug ("in while");
+                        debug ("read chan");
+                        var response = channel.read ();
+                        debug ("donen 1");
                         if (response.length == 0) {
                             debug("Server say nothing, left\n");
                             break;
                         }
-                        yield write_message (output, response);
+                        debug ("write client");
+                        write_message (output, response);
+                        debug ("write message done");
                         if (channel.eof()) {
                             yield conn.close_async (Priority.DEFAULT);
                         }
@@ -272,16 +281,34 @@ namespace Tarug {
             debug("closed connection");
         }
 
-        private async void write_message (OutputStream stream, Bytes bytes) throws Error{
+        private void write_message (OutputStream stream, Bytes bytes) throws Error {
             ssize_t i = 0;
             ssize_t wr = 0;
             ssize_t len = bytes.length;
 
             do {
                 var chunk = new Bytes.from_bytes(bytes, wr, len - wr);
-                i = yield stream.write_bytes_async (chunk);
+                debug("begin write %lld", chunk.length);
+                i = stream.write_bytes (chunk);
+                debug("end write");
+                debug ("i = %lld", i);
                 wr += i;
             } while (i > 0 && wr < len);
+            debug ("end");
+        }
+
+        private async Bytes dump_read(InputStream input) {
+            uint8[] body_buffer = new uint8[16 * 1024];
+            ssize_t read_bytes = yield input.read_async (body_buffer, Priority.DEFAULT);
+            debug("Got %lld bytes", read_bytes);
+
+            for (int i = 0; i < read_bytes; i++) {
+                print("%c", body_buffer[i]);
+            }
+            print("\n");
+
+
+            return new Bytes.take (body_buffer).slice(0, read_bytes);
         }
 
         private async Bytes read_message(InputStream input, bool is_first = false) throws Error {
@@ -308,6 +335,11 @@ namespace Tarug {
             ssize_t read_bytes = yield input.read_async (body_buffer, Priority.DEFAULT);
             debug("Got %lld bytes", read_bytes);
 
+            for (int i = 0; i < read_bytes; i++) {
+                print("%c", body_buffer[i]);
+            }
+            print("\n");
+
             uint8[] package_data = concat_bytes (header_buffer, body_buffer);
 
             return new Bytes.take (package_data);
@@ -325,6 +357,16 @@ namespace Tarug {
             GLib.Memory.copy (&total[first.length], second, second.length);
 
             return total;
+        }
+
+        public static async void wait_socket_2(Socket socket, IOCondition condition) {
+            var source = socket.create_source(condition, null);
+            source.set_callback(() => {
+                wait_socket_2.callback();
+                return false;
+            });
+            source.attach();
+            yield;
         }
     }
 }
