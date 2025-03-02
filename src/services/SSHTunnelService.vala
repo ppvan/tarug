@@ -256,7 +256,7 @@ namespace Tarug {
                             debug("Server say nothing, left\n");
                             break;
                         }
-                        yield write_response (output, response);
+                        yield write_message (output, response);
                         if (channel.eof()) {
                             yield conn.close_async (Priority.DEFAULT);
                         }
@@ -266,14 +266,13 @@ namespace Tarug {
                     debug("Broken pipe");
                     debug ("error: %s", err.message);
                     conn.close();
-                    channel.close();
                 }
             }
 
             debug("closed connection");
         }
 
-        private async void write_response (OutputStream stream, Bytes bytes) throws Error{
+        private async void write_message (OutputStream stream, Bytes bytes) throws Error{
             ssize_t i = 0;
             ssize_t wr = 0;
             ssize_t len = bytes.length;

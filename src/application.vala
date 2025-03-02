@@ -27,12 +27,6 @@ namespace Tarug {
     }
 
     public class Application : Adw.Application {
-        /*
-         * Static field for easy access in other places.
-         * If need to create many application instance (rarely happens) reconsider this approach.
-         */
-        public static ThreadPool<Worker> background;
-
         public int color_scheme { get; set; }
         public const int MAX_COLUMNS = 24;
         public const int PRE_ALLOCATED_CELL = 256;
@@ -87,15 +81,6 @@ namespace Tarug {
             Application.is_running = true;
 
             debug("Begin to load resources");
-            try {
-                // Don't change the max_thread because libpq did not support many query with 1 connection.
-                background = new ThreadPool<Worker>.with_owned_data ((worker) => {
-                    worker.run();
-                }, 1, false);
-            } catch (ThreadError err) {
-                debug(err.message);
-                assert_not_reached();
-            }
             debug("Resources loaded");
         }
 

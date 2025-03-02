@@ -22,10 +22,11 @@ tarug_sources = files(
     'services/SSHTunnelService.vala',
     'utils/Event.vala',
     'utils/ObservableList.vala',
+    'utils/Vector.vala',
     'utils/ValueConverter.vala',
     'utils/errors.vala',
     'utils/logging.vala',
-    'utils/types.vala',
+    'utils/Helpers.vala',
     'viewmodels/BaseViewModel.vala',
     'viewmodels/ConnectionViewModel.vala',
     'viewmodels/DataViewModel.vala',
@@ -62,7 +63,7 @@ ui_sources = files(
     'ui/widgets/TableGraph.vala',
     'ui/widgets/TableIndexInfo.vala',
     'ui/widgets/TableRow.vala',
-    'utils/helpers.vala',
+    'utils/UIHelpers.vala',
 )
 
 # Create config data, this will create a config.h file, then be bind to Config class.
