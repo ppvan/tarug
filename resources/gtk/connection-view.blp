@@ -62,7 +62,6 @@ template $TarugConnectionView: Adw.Bin {
     vexpand: true;
 
     Gtk.Paned paned {
-        // can-shrink: false;
         shrink-start-child: false;
         shrink-end-child: false;
 
@@ -125,16 +124,6 @@ template $TarugConnectionView: Adw.Bin {
                 }
             }
         }
-
-        // $TarugConnectionSidebar sidebar {
-        //   width-request: 300;
-        //   connections: bind template.viewmodel as <$TarugConnectionViewModel>.connections;
-        //   selected-connection: bind template.viewmodel as <$TarugConnectionViewModel>.selected-connection;
-        //   request-new-connection => $add_new_connection();
-        //   request_dup_connection => $dup_connection();
-        //   request_remove_connection => $remove_connection();
-        //   request_connect_database => $active_connection();
-        // }
 
         [end]
         Adw.Bin {
@@ -460,15 +449,5 @@ template $TarugConnectionView: Adw.Bin {
                 }
             };
         }
-
-        // $TarugConnectionForm form {
-        //     width-request: 800;
-        //     selected-connection: bind sidebar.selected-connection;
-        //     is-connectting: bind template.viewmodel as <$TarugConnectionViewModel>.is-connectting;
-        //     current-state: bind template.viewmodel as <$TarugConnectionViewModel>.current-state;
-        //     menu-model: primary_menu;
-        //     request-database => $active_connection ();
-        //     connections-changed => $save_connections ();
-        // }
     }
 }
