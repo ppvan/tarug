@@ -46,22 +46,23 @@ namespace Tarug {
                 return new Bytes(null);
             }
 
-            ssize_t len = SSHTunel.network_bytes_to_uint32 (&header[1]);
+            // Use postgresql specific protocol to read exact len (like HTTP Content-Length headers).
+            // Not great, but I'm not sure how to make it work  otherwise
+            // https://www.postgresql.org/docs/current/protocol-message-formats.html#PROTOCOL-MESSAGE-FORMATS
+            ssize_t len = SSHTunel.network_bytes_to_uint32(&header[1]);
 
             var buf = new uint8[len - 4];
             raw_channel.read(buf);
 
-            var total = SSHTunel.concat_bytes (header, buf);
-            return new Bytes.take (total);
+            var total = SSHTunel.concat_bytes(header, buf);
+            return new Bytes.take(total);
         }
 
-        public bool eof() {
+        public bool eof (){
             return raw_channel.eof() == EOF;
         }
 
         public void write (Bytes content){
-            print("write channel\n");
-
             ssize_t wr = 0;
             ssize_t i = 0;
             ssize_t len = content.length;
@@ -71,12 +72,11 @@ namespace Tarug {
                 i = raw_channel.write(chunk);
                 wr += i;
             } while (i > 0 && wr < len);
-            print("end write\n"); 
         }
 
-        public void close() {
-            raw_channel.close ();
-            raw_channel.wait_closed ();
+        public void close (){
+            raw_channel.close();
+            raw_channel.wait_closed();
         }
     }
 
@@ -106,7 +106,7 @@ namespace Tarug {
             SSH2.exit();
         }
 
-        public void connect (){
+        public void connect () throws Error {
             var client = new SocketClient();
             conn = client.connect(ssh_server);
             state = State.CONNECTED;
@@ -121,7 +121,7 @@ namespace Tarug {
             state = State.HANDSHAKED;
         }
 
-        public void authenticate (Auth auth){
+        public void authenticate (Auth auth) throws Error {
             connect();
             handshake();
             do_authenticate(auth);
@@ -154,14 +154,14 @@ namespace Tarug {
                     debug("Connected to chanel");
                     break;
                 }
-                conn.socket.condition_wait (IOCondition.IN);
+                conn.socket.condition_wait(IOCondition.IN);
             }
             raw_session.blocking = false;
 
             return new Channel(this, (owned) raw_channel);
         }
 
-        public async void wait_socket(IOCondition condition) {
+        public async void wait_socket (IOCondition condition){
             var socket = conn.get_socket();
             var source = socket.create_source(condition, null);
             source.set_callback(() => {
@@ -172,20 +172,17 @@ namespace Tarug {
             yield;
         }
 
-        public bool is_readable() {
+        public bool is_readable (){
             var socket = conn.get_socket();
-            return socket.condition_check (IOCondition.IN) == IOCondition.IN;
+            return socket.condition_check(IOCondition.IN) == IOCondition.IN;
         }
 
-        public string get_error_message() {
+        public string get_error_message (){
             char[] msg = null;
-            SSH2.Error err = raw_session.get_last_error (out msg);
+            raw_session.get_last_error(out msg);
+            var builder = new StringBuilder.from_buffer(msg);
 
-            for (int i = 0; i < msg.length; i++) {
-                debug("%c", msg[i]);
-            }
-
-            return "";
+            return builder.free_and_steal();
         }
     }
 
@@ -202,10 +199,9 @@ namespace Tarug {
         private Quark error_type;
 
 
-        public SSHTunel(Session session, NetworkAddress src, NetworkAddress dest){
+        public SSHTunel(Session session, NetworkAddress dest){
             error_type = Quark.from_string("ssh-tunnel-error");
             this.session = session;
-            this.src = src;
             this.dest = dest;
         }
 
@@ -216,153 +212,111 @@ namespace Tarug {
             return true;
         }
 
-        public void listen (){
-            this.stop();
-            this.add_inet_port(9000, null);
-            this.start();
+        // Open a tunnel on an available port, return the port if success, 0 on error
+        public uint16 open_tunnel (){
+            try {
+                this.stop();
+                uint16 local_port = this.add_any_inet_port(null);
+                this.src = new NetworkAddress.loopback(local_port);
+                this.start();
+
+                return local_port;
+            } catch (Error err) {
+                debug("error open tunnel: %s", err.message);
+                return 0;
+            }
         }
 
+        // Create the tunnel when a new connection is accepted
         private async void process_incoming (SocketConnection conn){
             debug("Accept connection");
             var input = new DataInputStream(conn.input_stream);
             var output = new DataOutputStream(conn.output_stream);
-
-            var host = dest.get_hostname();
-            var port = dest.get_port();
-            var shost = src.get_hostname();
-            var sport = src.get_port();
-
-            var channel = yield session.direct_tcpip(host, port, shost, sport);
-            var is_new = true;
-            var socket = conn.get_socket ();
+            var socket = conn.get_socket();
+            var channel = yield create_ssh_chanel ();
 
             while (!conn.is_closed()) {
-                debug("Begin conversation");
                 try {
-                    debug ("socket 1: %s", socket.condition_check (IOCondition.IN).to_string());
-                    yield wait_socket_2(socket, IOCondition.IN);
-                    debug ("socket 2: %s", socket.condition_check (IOCondition.IN).to_string());
-                    var client_msg = yield dump_read (input);
-                    debug ("socket 3: %s", socket.condition_check (IOCondition.IN).to_string());
+                    // Wait until we have data in the (local) socket
+                    yield wait_local_socket (socket, IOCondition.IN);
 
-                    is_new = false;
+                    var client_msg = yield read_local_socket (input);
+
                     if (client_msg.length == 0) {
-                        debug ("Client disconected\n");
+                        debug("client say not thing, assume closed\n");
                         break;
                     }
-                    channel.write (client_msg);
 
+                    // If we have some data, write it to the SSH connection
+                    channel.write(client_msg);
+                    // Now we wait for server response some data in the SSH connection
                     yield session.wait_socket (IOCondition.IN);
-                    debug ("done");
+
+                    // Read data from SSH connection until done
                     while (true) {
-                        debug ("in while");
-                        debug ("read chan");
-                        var response = channel.read ();
-                        debug ("donen 1");
+                        var response = channel.read();
                         if (response.length == 0) {
-                            debug("Server say nothing, left\n");
                             break;
                         }
-                        debug ("write client");
-                        write_message (output, response);
-                        debug ("write message done");
+                        write_message(output, response);
                         if (channel.eof()) {
-                            yield conn.close_async (Priority.DEFAULT);
+                            debug("Server say nothing, left\n");
+                            conn.close();
                         }
                     }
-
                 } catch (Error err) {
-                    debug("Broken pipe");
-                    debug ("error: %s", err.message);
-                    conn.close();
+                    debug("broken pipe: %s", err.message);
                 }
             }
-
-            debug("closed connection");
         }
 
         private void write_message (OutputStream stream, Bytes bytes) throws Error {
             ssize_t i = 0;
             ssize_t wr = 0;
             ssize_t len = bytes.length;
-
             do {
                 var chunk = new Bytes.from_bytes(bytes, wr, len - wr);
-                debug("begin write %lld", chunk.length);
-                i = stream.write_bytes (chunk);
-                debug("end write");
-                debug ("i = %lld", i);
+                i = stream.write_bytes(chunk);
                 wr += i;
             } while (i > 0 && wr < len);
-            debug ("end");
         }
 
-        private async Bytes dump_read(InputStream input) {
+        private async Bytes read_local_socket (InputStream input) throws Error {
             uint8[] body_buffer = new uint8[16 * 1024];
             ssize_t read_bytes = yield input.read_async (body_buffer, Priority.DEFAULT);
-            debug("Got %lld bytes", read_bytes);
 
-            for (int i = 0; i < read_bytes; i++) {
-                print("%c", body_buffer[i]);
-            }
-            print("\n");
-
-
-            return new Bytes.take (body_buffer).slice(0, read_bytes);
+            return new Bytes.take(body_buffer).slice(0, read_bytes);
         }
 
-        private async Bytes read_message(InputStream input, bool is_first = false) throws Error {
+        private async Channel create_ssh_chanel (){
+            var host = dest.get_hostname();
+            var port = dest.get_port();
+            var shost = src.get_hostname();
+            var sport = src.get_port();
 
-            debug("Reading message header: ");
-            uint32 header_length = (is_first ? 4 : 5);
-            uint8[] header_buffer = new uint8[header_length];
-            ssize_t actual = yield input.read_async (header_buffer, Priority.DEFAULT);
+            var channel = yield session.direct_tcpip (host, port, shost, sport);
 
-            debug("Read %lld as expected %lld", actual, header_length);
-            if (actual <= 0) {
-                return new Bytes(null);
-            }
-
-            int offset = is_first ? 0 : 1;
-            uint32 message_length = network_bytes_to_uint32 (&header_buffer[offset]);
-            if (message_length <= 4) {
-                return new Bytes(null);
-            }
-
-            debug("Got message length: %lld, readding body", message_length);
-
-            uint8[] body_buffer = new uint8[message_length - 4];
-            ssize_t read_bytes = yield input.read_async (body_buffer, Priority.DEFAULT);
-            debug("Got %lld bytes", read_bytes);
-
-            for (int i = 0; i < read_bytes; i++) {
-                print("%c", body_buffer[i]);
-            }
-            print("\n");
-
-            uint8[] package_data = concat_bytes (header_buffer, body_buffer);
-
-            return new Bytes.take (package_data);
+            return channel;
         }
 
-        public static uint32 network_bytes_to_uint32(uint8* raw_bytes) {
-            uint32 network_val = *((uint32*)raw_bytes);
+        public static uint32 network_bytes_to_uint32 (uint8 * raw_bytes){
+            uint32 network_val = *((uint32 *) raw_bytes);
             return uint32.from_network(network_val);
         }
 
-        public static uint8[] concat_bytes(uint8[] first, uint8[] second) {
+        public static uint8[] concat_bytes (uint8[] first, uint8[] second){
             uint8[] total = new uint8[first.length + second.length];
 
-            GLib.Memory.copy (total, first, first.length);
-            GLib.Memory.copy (&total[first.length], second, second.length);
+            GLib.Memory.copy(total, first, first.length);
+            GLib.Memory.copy(&total[first.length], second, second.length);
 
             return total;
         }
 
-        public static async void wait_socket_2(Socket socket, IOCondition condition) {
+        public static async void wait_local_socket (Socket socket, IOCondition condition){
             var source = socket.create_source(condition, null);
             source.set_callback(() => {
-                wait_socket_2.callback();
+                wait_local_socket.callback();
                 return false;
             });
             source.attach();

@@ -33,18 +33,10 @@ namespace Tarug {
 
             var loaded_conn = repository.find_all();
             connections.extend(loaded_conn);
-
             if (connections.empty()) {
-                // new_connection();
+                new_connection();
             }
-
             this.bind_property("current-state", this, "is-connectting", SYNC_CREATE, from_state_to_connecting);
-
-            // Auto save data each 10 secs in case app crash.
-            // Timeout.add_seconds (10, () => {
-            // repository.save (connections.to_list ());
-            // return Source.CONTINUE;
-            // }, Priority.LOW);
         }
 
         public void new_connection (){
@@ -52,8 +44,6 @@ namespace Tarug {
             conn = repository.append_connection(conn);
             connections.append(conn);
             selected_connection = conn;
-
-            // save_connections ();
         }
 
         public void dupplicate_connection (Connection conn){
@@ -97,22 +87,17 @@ namespace Tarug {
 
                 string remote_host = "localhost";
                 uint16 remote_port = 5432;
-                uint16 local_destport = 9000;
 
                 var server = new NetworkAddress(server_ip, server_port);
-                var local = new NetworkAddress.loopback(local_destport);
                 var remote = new NetworkAddress(remote_host, remote_port);
-
 
                 var auth = new Auth.password_auth(username, password);
                 var session = new Session(server);
                 session.authenticate(auth);
 
-
                 // Connect and auth session
-
-                this.tunnel = new SSHTunel(session, local, remote);
-                this.tunnel.listen ();
+                this.tunnel = new SSHTunel(session, remote);
+                this.tunnel.open_tunnel();
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);
