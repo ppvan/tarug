@@ -20,6 +20,7 @@ namespace Tarug {
         public string err_msg { get; private set; default = "hello world"; }
         public ObservableList<Connection> connections { get; private set; default = new ObservableList<Connection> (); }
         public Connection ? selected_connection { get; set; }
+        public SSHTunel tunnel;
 
         /** True when trying to establish a connection util know results. */
         public bool is_connectting { get; set; default = false; }
@@ -32,18 +33,10 @@ namespace Tarug {
 
             var loaded_conn = repository.find_all();
             connections.extend(loaded_conn);
-
             if (connections.empty()) {
-                // new_connection();
+                new_connection();
             }
-
             this.bind_property("current-state", this, "is-connectting", SYNC_CREATE, from_state_to_connecting);
-
-            // Auto save data each 10 secs in case app crash.
-            // Timeout.add_seconds (10, () => {
-            // repository.save (connections.to_list ());
-            // return Source.CONTINUE;
-            // }, Priority.LOW);
         }
 
         public void new_connection (){
@@ -51,8 +44,6 @@ namespace Tarug {
             conn = repository.append_connection(conn);
             connections.append(conn);
             selected_connection = conn;
-
-            // save_connections ();
         }
 
         public void dupplicate_connection (Connection conn){
@@ -89,6 +80,24 @@ namespace Tarug {
         public async void active_connection (Connection connection){
             this.current_state = State.CONNECTING;
             try {
+                string username = "ppvan";
+                string password = "ubuntu";
+                string server_ip = "127.0.0.1";
+                uint16 server_port = 22;
+
+                string remote_host = "localhost";
+                uint16 remote_port = 5432;
+
+                var server = new NetworkAddress(server_ip, server_port);
+                var remote = new NetworkAddress(remote_host, remote_port);
+
+                var auth = new Auth.password_auth(username, password);
+                var session = new Session(server);
+                session.authenticate(auth);
+
+                // Connect and auth session
+                this.tunnel = new SSHTunel(session, remote);
+                this.tunnel.open_tunnel();
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);

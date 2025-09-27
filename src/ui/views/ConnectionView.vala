@@ -195,6 +195,7 @@ namespace Tarug {
             binddings.bind("password", password_entry, "text", SYNC_CREATE | BIDIRECTIONAL);
             binddings.bind("database", database_entry, "text", SYNC_CREATE | BIDIRECTIONAL);
             binddings.bind("use_ssl", ssl_switch, "active", SYNC_CREATE | BIDIRECTIONAL);
+            binddings.bind("use_ssh", ssh_switch, "active", SYNC_CREATE | BIDIRECTIONAL);
             binddings.bind("cert_path", cert_path, "text", SYNC_CREATE | BIDIRECTIONAL);
             // debug ("set_up binddings done");
 
@@ -230,6 +231,9 @@ namespace Tarug {
 
         [GtkChild]
         private unowned Gtk.Switch ssl_switch;
+
+        [GtkChild]
+        private unowned Gtk.Switch ssh_switch;
     }
 
 

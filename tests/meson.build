@@ -37,3 +37,5 @@ foreach name : tests
     env: ['G_TEST_SRCDIR=' + meson.current_source_dir()]
     )
 endforeach
+
+executable('ssh_tunnel', [tarug_resources, tarug_sources, 'test_sshtunel.vala'], dependencies: tarug_deps)

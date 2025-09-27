@@ -25,6 +25,7 @@ BUILDER_FLAGS := --ccache \
 RUNNER_FLAGS := --with-appdir \
 				--allow=devel \
 				--env=AT_SPI_BUS_ADDRESS=unix:path=/run/flatpak/at-spi-bus \
+				--env=COLORTERM=$(COLORTERM) \
 				--env=DESKTOP_SESSION=$(DESKTOP_SESSION) \
 				--env=LANG=$(LANG) \
 				--env=WAYLAND_DISPLAY=$(WAYLAND_DISPLAY) \
@@ -34,7 +35,6 @@ RUNNER_FLAGS := --with-appdir \
 				--bind-mount=/run/host/fonts=/usr/share/fonts \
 				--bind-mount=/run/host/fonts-cache=/var/cache/fontconfig \
 				--bind-mount=/run/host/user-fonts-cache=$(HOME)/.cache/fontconfig \
-				--bind-mount=/run/host/font-dirs.xml=$(HOME)/.cache/font-dirs.xml \
 				--bind-mount=/run/flatpak/at-spi-bus=/run/user/1000/at-spi/bus \
 				--filesystem=$(HOME)/.local/share/fonts:ro \
 				--filesystem=$(HOME)/.cache/fontconfig:ro \
@@ -72,7 +72,7 @@ configure: build-deps
 	--filesystem=$(PWD)/$(REPO_DIR) \
 	--filesystem=$(PWD)/$(BUILD_DIR) \
 	$(REPO_DIR) \
-	meson setup $(BUILD_DIR)
+	meson setup --prefix /app $(BUILD_DIR)
 
 build: configure
 	flatpak build \
@@ -95,6 +95,7 @@ install: build
 run: install
 	flatpak build \
 	$(RUNNER_FLAGS) \
+	--env=G_MESSAGES_DEBUG=all \
 	$(REPO_DIR) tarug
 
 bundle: build
@@ -105,8 +106,11 @@ bundle: build
 lsp:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/lib/sdk/vala/bin/vala-language-server
 
-meson:
-	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson
+shell:
+	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/bash
+
+shell:
+	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/sh
 
 test:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson test -C $(BUILD_DIR)
