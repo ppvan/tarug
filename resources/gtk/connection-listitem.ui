@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="TarugConnectionRow">
+        <property name="item" bind-source="GtkListItem" bind-property="item" bind-flags="sync-create"/>
+        <property name="pos" bind-source="GtkListItem" bind-property="position" bind-flags="sync-create"/>
+      </object>
+    </property>
+  </template>
+</interface>

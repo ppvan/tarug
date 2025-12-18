@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="TarugTableRow">
+        <property name="icon-name">table-symbolic</property>
+        <binding name="content">
+          <lookup name="name" type="TarugTable">
+            <lookup name="item" type="GtkListItem">
+              <constant>GtkListItem</constant>
+            </lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>

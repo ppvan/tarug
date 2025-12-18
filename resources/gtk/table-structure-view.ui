@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugTableStructureView" parent="GtkBox">
+    <property name="orientation">1</property>
+    <property name="margin-top">22</property>
+    <property name="margin-bottom">12</property>
+    <child>
+      <object class="GtkGrid">
+        <property name="hexpand">true</property>
+        <property name="vexpand">true</property>
+        <property name="row-homogeneous">true</property>
+        <property name="column-homogeneous">true</property>
+        <property name="row-spacing">24</property>
+        <child>
+          <object class="TarugTableColumnInfo" id="columns">
+            <property name="columns" bind-source="TarugTableStructureView" bind-property="columns" bind-flags="sync-create"/>
+            <layout>
+              <property name="row">0</property>
+              <property name="column">1</property>
+              <property name="row-span">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="TarugTableIndexInfo" id="indexes">
+            <property name="indexes" bind-source="TarugTableStructureView" bind-property="indexes" bind-flags="sync-create"/>
+            <layout>
+              <property name="row">2</property>
+              <property name="column">1</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

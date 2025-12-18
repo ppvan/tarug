@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugTableIndexInfo" parent="AdwBin">
+    <child>
+      <object class="GtkScrolledWindow">
+        <child>
+          <object class="GtkColumnView" id="view">
+            <property name="model">
+              <object class="GtkSingleSelection">
+                <property name="model" bind-source="TarugTableIndexInfo" bind-property="indexes" bind-flags="sync-create"/>
+              </object>
+            </property>
+            <style>
+              <class name="data-table"/>
+            </style>
+            <property name="show-column-separators">true</property>
+            <property name="show-row-separators">true</property>
+          </object>
+        </child>
+        <property name="vexpand">true</property>
+      </object>
+    </child>
+  </template>
+</interface>

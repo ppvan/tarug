@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugConnectionRow" parent="GtkBox">
+    <property name="orientation">0</property>
+    <property name="spacing">12</property>
+    <child>
+      <object class="GtkImage">
+        <property name="icon-name">text-sql-symbolic</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <binding name="label">
+          <lookup name="name" type="TarugConnection">
+            <lookup name="item" type="TarugConnectionRow">
+              <constant>TarugConnectionRow</constant>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="halign">1</property>
+        <property name="ellipsize">3</property>
+        <property name="single-line-mode">true</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkPopoverMenu" id="popover">
+        <property name="menu-model">menu</property>
+        <property name="has-arrow">false</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkGestureClick">
+        <property name="button">3</property>
+        <signal name="released" handler="on_right_clicked"/>
+      </object>
+    </child>
+  </template>
+  <menu id="menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Connect</attribute>
+        <attribute name="action">conn.connect</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Dupplicate</attribute>
+        <attribute name="action">conn.dupplicate</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Delete</attribute>
+        <attribute name="action">conn.delete</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

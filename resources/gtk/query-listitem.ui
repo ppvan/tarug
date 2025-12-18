@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <binding name="label">
+          <lookup name="sql" type="TarugQuery">
+            <lookup name="item" type="GtkListItem">
+              <constant>GtkListItem</constant>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="halign">1</property>
+        <property name="ellipsize">3</property>
+        <property name="single-line-mode">true</property>
+      </object>
+    </property>
+  </template>
+</interface>

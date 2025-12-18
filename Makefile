@@ -73,7 +73,7 @@ configure: build-deps
 	--filesystem=$(PWD)/$(REPO_DIR) \
 	--filesystem=$(PWD)/$(BUILD_DIR) \
 	$(REPO_DIR) \
-	meson setup $(BUILD_DIR)
+	meson setup $(BUILD_DIR) --prefix=/app
 
 build: configure
 	flatpak build \

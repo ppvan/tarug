@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugWhereEntry" parent="GtkBox">
+    <property name="orientation">0</property>
+    <property name="spacing">12</property>
+    <property name="margin-top">4</property>
+    <property name="margin-bottom">7</property>
+    <property name="margin-end">16</property>
+    <property name="margin-start">16</property>
+    <child>
+      <object class="GtkLabel">
+        <style>
+          <class name="title-3"/>
+        </style>
+        <property name="label">WHERE</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSourceView" id="editor">
+        <style>
+          <class name="where-filter"/>
+        </style>
+        <property name="hexpand">true</property>
+        <property name="buffer">
+          <object class="GtkSourceBuffer" id="buffer"></object>
+        </property>
+        <property name="monospace">true</property>
+        <property name="wrap-mode">2</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="filter_btn">
+        <style>
+          <class name="suggested-action"/>
+        </style>
+        <property name="label">Filter</property>
+        <signal name="clicked" handler="filter_query"/>
+      </object>
+    </child>
+  </template>
+</interface>

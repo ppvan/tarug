@@ -29,9 +29,6 @@ foreach name : tests
         name + '_test',
         [tarug_resources, tarug_sources, 'test_runtime.vala', name + '_test.vala'],
         dependencies: tarug_deps,
-        vala_args: [
-            '--gresourcesdir=' + tarug_resources_dir,
-        ]
     ),
     protocol: 'tap',
     env: ['G_TEST_SRCDIR=' + meson.current_source_dir()]

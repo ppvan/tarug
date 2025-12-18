@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugQueryEditor" parent="AdwBin">
+    <binding name="selected-query">
+      <lookup name="selected-query" type="TarugQueryViewModel">
+        <lookup name="query-viewmodel" type="TarugQueryEditor">
+          <constant>TarugQueryEditor</constant>
+        </lookup>
+      </lookup>
+    </binding>
+    <child>
+      <object class="GtkPaned" id="paned">
+        <property name="orientation">1</property>
+        <property name="shrink-start-child">false</property>
+        <property name="resize-start-child">true</property>
+        <property name="shrink-end-child">false</property>
+        <property name="resize-end-child">false</property>
+        <child>
+          <object class="AdwBin">
+            <property name="height-request">250</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="hscrollbar-policy">2</property>
+                <child>
+                  <object class="GtkSourceView" id="editor">
+                    <property name="buffer">
+                      <object class="GtkSourceBuffer" id="buffer"></object>
+                    </property>
+                    <property name="wrap-mode">2</property>
+                    <property name="monospace">true</property>
+                    <property name="auto-indent">true</property>
+                    <property name="show-line-numbers">true</property>
+                    <property name="smart-backspace">true</property>
+                    <property name="smart-home-end">1</property>
+                    <property name="highlight-current-line">true</property>
+                    <property name="insert-spaces-instead-of-tabs">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">1</property>
+            <property name="height-request">400</property>
+            <child>
+              <object class="GtkBox">
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <property name="spacing">8</property>
+                <child>
+                  <object class="GtkMenuButton">
+                    <style>
+                      <class name="flat"/>
+                    </style>
+                    <property name="tooltip-text">editor setting</property>
+                    <property name="icon-name">settings-symbolic</property>
+                    <property name="halign">1</property>
+                    <property name="valign">1</property>
+                    <property name="direction">1</property>
+                    <property name="menu-model">menu</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuButton">
+                    <style>
+                      <class name="flat"/>
+                    </style>
+                    <property name="icon-name">history-undo-symbolic</property>
+                    <property name="tooltip-text">Query History</property>
+                    <property name="popover">
+                      <object class="GtkPopover" id="popover">
+                        <property name="height-request">300</property>
+                        <property name="width-request">600</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="spacing">4</property>
+                            <property name="orientation">1</property>
+                            <child>
+                              <object class="GtkScrolledWindow">
+                                <property name="vexpand">true</property>
+                                <property name="min-content-width">300</property>
+                                <property name="max-content-width">600</property>
+                                <child>
+                                  <object class="GtkListView">
+                                    <style>
+                                      <class name="navigation-sidebar"/>
+                                    </style>
+                                    <property name="model">
+                                      <object class="GtkSingleSelection" id="selection_model">
+                                        <binding name="model">
+                                          <lookup name="query-history" type="TarugQueryHistoryViewModel">
+                                            <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                                              <constant>TarugQueryEditor</constant>
+                                            </lookup>
+                                          </lookup>
+                                        </binding>
+                                      </object>
+                                    </property>
+                                    <property name="factory">
+                                      <object class="GtkBuilderListItemFactory">
+                                        <property name="resource">/io/github/ppvan/tarug/gtk/query-listitem.ui</property>
+                                      </object>
+                                    </property>
+                                    <signal name="activate" handler="on_query_history_exec"/>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator"></object>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <style>
+                                  <class name="destructive-action"/>
+                                </style>
+                                <property name="label">Clear History</property>
+                                <signal name="clicked" handler="on_clear_history"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="export">
+                    <style>
+                      <class name="flat"/>
+                    </style>
+                    <property name="tooltip-text">Export Result</property>
+                    <property name="icon-name">export-symbolic</property>
+                    <binding name="visible">
+                      <lookup name="success" type="TarugQueryHistoryViewModel">
+                        <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                          <constant>TarugQueryEditor</constant>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <signal name="clicked" handler="on_export_csv"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="hexpand">true</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkSpinner" id="spinner">
+                    <binding name="spinning">
+                      <lookup name="is-loading" type="TarugQueryHistoryViewModel">
+                        <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                          <constant>TarugQueryEditor</constant>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="run_query_btn">
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                    <property name="label">Run Query</property>
+                    <property name="tooltip-text">Ctrl+Enter</property>
+                    <signal name="clicked" handler="run_query_cb"/>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"></object>
+            </child>
+            <child>
+              <object class="TarugQueryResults" id="query_results">
+                <property name="wellcome_message">Run a query</property>
+                <property name="show_loading">true</property>
+                <binding name="current-relation">
+                  <lookup name="current-relation" type="TarugQueryHistoryViewModel">
+                    <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                      <constant>TarugQueryEditor</constant>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <binding name="is-loading">
+                  <lookup name="is-loading" type="TarugQueryHistoryViewModel">
+                    <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                      <constant>TarugQueryEditor</constant>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <binding name="err-msg">
+                  <lookup name="err-msg" type="TarugQueryHistoryViewModel">
+                    <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                      <constant>TarugQueryEditor</constant>
+                    </lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">4</property>
+                <property name="margin-start">12</property>
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+                <property name="margin-end">12</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-size">1</property>
+                    <property name="margin-end">6</property>
+                    <style>
+                      <class name="success"/>
+                    </style>
+                    <property name="icon-name">test-pass-symbolic</property>
+                    <property name="pixel-size">20</property>
+                    <binding name="visible">
+                      <lookup name="success" type="TarugQueryHistoryViewModel">
+                        <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                          <constant>TarugQueryEditor</constant>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="row_affect">
+                    <binding name="label">
+                      <lookup name="row-affected" type="TarugQueryHistoryViewModel">
+                        <lookup name="query-history-viewmodel" type="TarugQueryEditor">
+                          <constant>TarugQueryEditor</constant>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="hexpand">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+  <menu id="menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Editor Font</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Auto Exec History</attribute>
+        <attribute name="action">editor.auto-exec-history</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Auto Uppercase</attribute>
+        <attribute name="action">editor.auto-uppercase</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

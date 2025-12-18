@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugTableGraph" parent="GtkBox">
+    <property name="spacing">12</property>
+    <property name="vexpand">true</property>
+    <property name="hexpand">true</property>
+    <property name="margin-top">4</property>
+    <property name="margin-bottom">4</property>
+    <property name="margin-start">4</property>
+    <property name="margin-end">4</property>
+    <style>
+      <class name="view"/>
+    </style>
+    <child>
+      <object class="GtkDrawingArea" id="area">
+        <property name="hexpand">true</property>
+        <property name="vexpand">true</property>
+      </object>
+    </child>
+  </template>
+</interface>

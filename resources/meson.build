@@ -1,115 +1,94 @@
-
-
-blueprint_compiler = find_program('blueprint-compiler')
-
-# CURRENT_SOURCE_DIR relative to BUILDDIR blueprints_output_dir = meson.current_build_dir()
-# This is a hack to make sure below target was run. For some reason you can't use example from blueprint docs.
-
-tarug_resources_dir = meson.current_build_dir()
-
-mark_ups = [
-    'gtk/connection-listitem.blp',
-    'gtk/connection-row.blp',
-    'gtk/connection-view.blp',
-    'gtk/datacell.blp',
-    'gtk/help-overlay.blp',
-    'gtk/preferences-window.blp',
-    'gtk/query-editor.blp',
-    'gtk/query-listitem.blp',
-    'gtk/query-results.blp',
-    'gtk/schema-view.blp',
-    'gtk/style-switcher.blp',
-    'gtk/table-cols.blp',
-    'gtk/table-data-view.blp',
-    'gtk/table-fk.blp',
-    'gtk/table-graph.blp',
-    'gtk/table-index.blp',
-    'gtk/table-listitem.blp',
-    'gtk/table-row.blp',
-    'gtk/table-structure-view.blp',
-    'gtk/view-data-view.blp',
-    'gtk/view-listitem.blp',
-    'gtk/view-structure-view.blp',
-    'gtk/window.blp',
-    'gtk/backup-dialog.blp',
-    'gtk/restore-dialog.blp',
-    'gtk/edit-row.blp',
-    'gtk/where-entry.blp'
-]
-
-icons = [
-    'plus-large-symbolic.svg',
-    'minus-large-symbolic.svg',
-    'library-symbolic.svg',
-    'object-rows-symbolic.svg',
-    'terminal-symbolic.svg',
-    'loupe-large-symbolic.svg',
-    'refresh-large-symbolic.svg',
-    'table-symbolic.svg',
-    'columns-symbolic.svg',
-    'step-out-symbolic.svg',
-    'arrow-into-box-symbolic.svg',
-    'category-search-symbolic.svg',
-    'left-large-symbolic.svg',
-    'right-large-symbolic.svg',
-    'text-sql-symbolic.svg',
-    'webview-filler-symbolic.svg',
-    'settings-symbolic.svg',
-    'test-pass-symbolic.svg',
-    'history-undo-symbolic.svg',
-    'check-plain-symbolic.svg',
-    'export-symbolic.svg',
-    'filemanager-app-symbolic.svg',
-    'application-certificate-symbolic.svg',
-    'copy-symbolic.svg'
-]
-
-
-blueprints = custom_target(
-    'blueprints',
-    input: files(mark_ups),
-    build_by_default: true,
-    build_always_stale: true,
-    #   This does not run if you use an dot (.)
-    output: '.',
-    command: [
-        blueprint_compiler,
-        'batch-compile',
-        '@OUTPUT@',
-        '@CURRENT_SOURCE_DIR@',
-        '@INPUT@',
-    ],
+# UI files in gtk/ directory
+ui_files = files(
+  'gtk/connection-listitem.ui',
+  'gtk/connection-row.ui',
+  'gtk/connection-view.ui',
+  'gtk/datacell.ui',
+  'gtk/help-overlay.ui',
+  'gtk/preferences-window.ui',
+  'gtk/query-editor.ui',
+  'gtk/query-listitem.ui',
+  'gtk/query-results.ui',
+  'gtk/schema-view.ui',
+  'gtk/style-switcher.ui',
+  'gtk/table-cols.ui',
+  'gtk/table-data-view.ui',
+  'gtk/table-fk.ui',
+  'gtk/table-graph.ui',
+  'gtk/table-index.ui',
+  'gtk/table-listitem.ui',
+  'gtk/table-row.ui',
+  'gtk/table-structure-view.ui',
+  'gtk/view-data-view.ui',
+  'gtk/view-listitem.ui',
+  'gtk/view-structure-view.ui',
+  'gtk/window.ui',
+  'gtk/backup-dialog.ui',
+  'gtk/restore-dialog.ui',
+  'gtk/edit-row.ui',
+  'gtk/where-entry.ui'
 )
 
-ui_files = ''
-foreach mark_up : mark_ups
-    filename = mark_up.replace('.blp', '.ui')
-    ui_files += f'<file preprocess="xml-stripblanks">@filename@</file>'
+# Icon files in gtk/icons/ directory
+icon_files = files(
+  'gtk/icons/plus-large-symbolic.svg',
+  'gtk/icons/minus-large-symbolic.svg',
+  'gtk/icons/library-symbolic.svg',
+  'gtk/icons/object-rows-symbolic.svg',
+  'gtk/icons/terminal-symbolic.svg',
+  'gtk/icons/loupe-large-symbolic.svg',
+  'gtk/icons/refresh-large-symbolic.svg',
+  'gtk/icons/table-symbolic.svg',
+  'gtk/icons/columns-symbolic.svg',
+  'gtk/icons/step-out-symbolic.svg',
+  'gtk/icons/arrow-into-box-symbolic.svg',
+  'gtk/icons/category-search-symbolic.svg',
+  'gtk/icons/left-large-symbolic.svg',
+  'gtk/icons/right-large-symbolic.svg',
+  'gtk/icons/text-sql-symbolic.svg',
+  'gtk/icons/webview-filler-symbolic.svg',
+  'gtk/icons/settings-symbolic.svg',
+  'gtk/icons/test-pass-symbolic.svg',
+  'gtk/icons/history-undo-symbolic.svg',
+  'gtk/icons/check-plain-symbolic.svg',
+  'gtk/icons/export-symbolic.svg',
+  'gtk/icons/filemanager-app-symbolic.svg',
+  'gtk/icons/application-certificate-symbolic.svg',
+  'gtk/icons/copy-symbolic.svg'
+)
+
+# Generate XML entries for gresource file
+fs = import('fs')
+
+ui_entries = []
+foreach f : ui_files
+  ui_entries += '<file preprocess="xml-stripblanks">gtk/@0@</file>'.format(fs.name(f))
 endforeach
 
-icon_files = ''
-foreach icon : icons
-    icon_files += f'<file preprocess="xml-stripblanks" alias="@icon@">gtk/icons/@icon@</file>'
+icon_entries = []
+foreach f : icon_files
+  icon_name = fs.name(f)
+  icon_entries += '<file preprocess="xml-stripblanks" alias="@0@">gtk/icons/@1@</file>'.format(icon_name, icon_name)
 endforeach
 
+# Configure gresource XML
 resource_data = configuration_data()
 resource_data.set('PREFIX', app_resource_prefix)
-resource_data.set('UI_FILES', ui_files)
-resource_data.set('ICON_FILES', icon_files)
-
+resource_data.set('UI_FILES', '\n    '.join(ui_entries))
+resource_data.set('ICON_FILES', '\n    '.join(icon_entries))
 
 tarug_resources_xml = configure_file(
-    input: 'tarug.gresource.xml.in',
-    output: 'tarug.gresource.xml',
-    configuration: resource_data,
+  input: 'tarug.gresource.xml.in',
+  output: 'tarug.gresource.xml',
+  configuration: resource_data,
 )
 
-
+# Compile resources
 tarug_resources = gnome.compile_resources(
-    'tarug_resources',
-    tarug_resources_xml,
-    c_name: 'tarug_resources',
-    dependencies: [blueprints],
-    build_by_default: true
+  'tarug_resources',
+  tarug_resources_xml,
+  source_dir: meson.current_source_dir(),
+  c_name: 'tarug_resources',
+  dependencies: [ui_files, icon_files],
+  build_by_default: true
 )
-

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugWindow" parent="AdwApplicationWindow">
+    <property name="default-width">1280</property>
+    <property name="default-height">800</property>
+    <property name="width-request">1280</property>
+    <property name="height-request">800</property>
+    <property name="title">tarug</property>
+    <child>
+      <object class="AdwToastOverlay" id="overlay">
+        <child>
+          <object class="GtkStack" id="stack">
+            <property name="transition-type">7</property>
+            <binding name="visible-child-name">
+              <lookup name="current-view" type="TarugNavigationService">
+                <lookup name="navigation" type="TarugWindow">
+                  <constant>TarugWindow</constant>
+                </lookup>
+              </lookup>
+            </binding>
+            <child>
+              <object class="GtkStackPage">
+                <property name="name">connection-view</property>
+                <property name="child">
+                  <object class="TarugConnectionView"></object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage" id="query-view">
+                <property name="name">query-view</property>
+                <property name="child">
+                  <object class="TarugSchemaView"></object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

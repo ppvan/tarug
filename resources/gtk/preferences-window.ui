@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugPreferencesWindow" parent="AdwPreferencesDialog">
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="name">General</property>
+        <property name="icon-name">settings-symbolic</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="name">database</property>
+            <property name="title">Database</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Connection timeout</property>
+                <property name="subtitle">in seconds</property>
+                <child>
+                  <object class="GtkSpinButton" id="conn_timeout">
+                    <property name="valign">3</property>
+                    <property name="numeric">true</property>
+                    <property name="value">5</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">1</property>
+                        <property name="upper">100</property>
+                        <property name="value">5</property>
+                        <property name="step-increment">1</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Query timeout</property>
+                <property name="subtitle">in seconds</property>
+                <child>
+                  <object class="GtkSpinButton" id="query_timeout">
+                    <property name="valign">3</property>
+                    <property name="numeric">true</property>
+                    <property name="value">5</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">1</property>
+                        <property name="upper">100</property>
+                        <property name="step-increment">1</property>
+                        <property name="value">5</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Query limit</property>
+                <property name="subtitle">Max rows return in SELECT</property>
+                <child>
+                  <object class="GtkSpinButton" id="query_limit">
+                    <property name="valign">3</property>
+                    <property name="numeric">true</property>
+                    <property name="value">200</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">100</property>
+                        <property name="upper">900</property>
+                        <property name="step-increment">100</property>
+                        <property name="value">200</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="name">editor</property>
+            <property name="title">Editor</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Editor Font</property>
+                <property name="activatable">true</property>
+                <child>
+                  <object class="GtkLabel" id="font_label">
+                    <property name="label">Source Code Pro 12</property>
+                  </object>
+                </child>
+                <signal name="activated" handler="on_font_chooser"/>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

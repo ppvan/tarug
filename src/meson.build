@@ -109,7 +109,6 @@ add_project_arguments(
     [
         '--target-glib=2.80',
         '--vapidir', vapi_dir,
-        '--gresourcesdir', tarug_resources_dir,
         '--enable-deprecated',
         # IIUC, cc.find_library will not intergrate with vala compiler, hence the custom --pkg option
         '--pkg', 'pg_query',
@@ -145,8 +144,5 @@ executable(
     app_name,
     [tarug_resources, tarug_sources_main],
     dependencies: tarug_deps,
-    vala_args: [
-        '--gresourcesdir=' + tarug_resources_dir,
-    ],
     install: true,
 )

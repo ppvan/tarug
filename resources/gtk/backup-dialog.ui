@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugBackupDialog" parent="AdwDialog">
+    <property name="follows-content-size">true</property>
+    <property name="title" translatable="yes">Back up database</property>
+    <property name="presentation-mode">1</property>
+    <style>
+      <class name="backup-dialog"/>
+    </style>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <property name="width-request">600</property>
+        <child type="top">
+          <object class="AdwHeaderBar"></object>
+        </child>
+        <property name="content">
+          <object class="AdwClamp">
+            <property name="maximum-size">540</property>
+            <property name="margin-top">16</property>
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">1</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">1</property>
+                    <property name="spacing">16</property>
+                    <child>
+                      <object class="GtkListBox">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                        <property name="selection-mode">0</property>
+                        <child>
+                          <object class="AdwComboRow" id="database_row">
+                            <property name="title" translatable="yes">Database</property>
+                            <property name="subtitle" translatable="yes">Database to backup</property>
+                            <binding name="model">
+                              <lookup name="connections" type="TarugConnectionViewModel">
+                                <lookup name="viewmodel" type="TarugBackupDialog">
+                                  <constant>TarugBackupDialog</constant>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwComboRow" id="format_row">
+                            <property name="title" translatable="yes">Format</property>
+                            <property name="subtitle" translatable="yes">Output file format</property>
+                            <property name="model" bind-source="TarugBackupDialog" bind-property="formats" bind-flags="sync-create"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwComboRow" id="section_row">
+                            <property name="title" translatable="yes">Export section</property>
+                            <property name="subtitle" translatable="yes">Export schema-only, data-only or both</property>
+                            <property name="model" bind-source="TarugBackupDialog" bind-property="sections" bind-flags="sync-create"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwSwitchRow">
+                            <property name="title" translatable="yes">Override old schema</property>
+                            <property name="subtitle" translatable="yes">Output DROP than CREATE</property>
+                            <property name="active" bind-source="TarugBackupDialog" bind-property="clean" bind-flags="sync-create|bidirectional"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwSwitchRow">
+                            <property name="title" translatable="yes">Create database</property>
+                            <property name="subtitle" translatable="yes">Add CREATE DATABASE in output</property>
+                            <property name="active" bind-source="TarugBackupDialog" bind-property="create" bind-flags="sync-create|bidirectional"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="run_button">
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                        <property name="halign">2</property>
+                        <property name="margin-bottom">20</property>
+                        <property name="label" translatable="yes">_Back up</property>
+                        <property name="valign">2</property>
+                        <property name="use-underline">true</property>
+                        <signal name="clicked" handler="on_do_backup_click"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

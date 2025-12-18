@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugQueryResults" parent="AdwBin">
+    <property name="wellcome_message">Select a table</property>
+    <child>
+      <object class="GtkStack" id="stack">
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">empty</property>
+            <property name="child">
+              <object class="AdwClamp">
+                <property name="maximum-size">32</property>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="icon-xl"/>
+                    </style>
+                    <property name="orientation">1</property>
+                    <property name="valign">3</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">webview-filler-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label">
+                        <style>
+                          <class name="title-2"/>
+                        </style>
+                        <property name="halign">3</property>
+                        <property name="valign">3</property>
+                        <property name="margin-start">24</property>
+                        <property name="margin-top">24</property>
+                        <property name="margin-bottom">24</property>
+                        <property name="margin-end">24</property>
+                        <binding name="label">
+                          <lookup name="wellcome_message" type="TarugQueryResults">
+                            <constant>TarugQueryResults</constant>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">data</property>
+            <property name="child">
+              <object class="GtkScrolledWindow">
+                <child>
+                  <object class="GtkColumnView" id="data_view">
+                    <property name="show-row-separators">true</property>
+                    <property name="show-column-separators">true</property>
+                    <property name="reorderable">false</property>
+                    <property name="enable-rubberband">false</property>
+                    <style>
+                      <class name="data-table"/>
+                    </style>
+                    <property name="vexpand">true</property>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">loading</property>
+            <property name="child">
+              <object class="AdwClamp">
+                <property name="maximum-size">32</property>
+                <child>
+                  <object class="GtkSpinner" id="spinner">
+                    <property name="spinning" bind-source="TarugQueryResults" bind-property="is-loading" bind-flags="sync-create"/>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">error</property>
+            <property name="child">
+              <object class="GtkScrolledWindow">
+                <child>
+                  <object class="GtkLabel" id="status_label">
+                    <property name="halign">1</property>
+                    <property name="valign">1</property>
+                    <property name="margin-start">24</property>
+                    <property name="margin-top">24</property>
+                    <property name="margin-bottom">24</property>
+                    <property name="margin-end">24</property>
+                    <style>
+                      <class name="error"/>
+                    </style>
+                    <property name="label" bind-source="TarugQueryResults" bind-property="err_msg" bind-flags="sync-create"/>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugEditRowDialog" parent="AdwDialog">
+    <property name="follows-content-size">true</property>
+    <property name="title" translatable="yes">Edit</property>
+    <property name="presentation-mode">1</property>
+    <style>
+      <class name="backup-dialog"/>
+    </style>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar"></object>
+        </child>
+        <property name="width-request">640</property>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hexpand">true</property>
+            <property name="max-content-height">960</property>
+            <property name="min-content-height">400</property>
+            <property name="valign">3</property>
+            <property name="hscrollbar-policy">2</property>
+            <child>
+              <object class="GtkGrid" id="grid">
+                <property name="margin-bottom">16</property>
+                <property name="margin-top">16</property>
+                <property name="margin-start">16</property>
+                <property name="margin-end">16</property>
+                <property name="row-spacing">10</property>
+                <property name="column-spacing">8</property>
+                <property name="column-homogeneous">true</property>
+              </object>
+            </child>
+          </object>
+        </property>
+        <child type="bottom">
+          <object class="GtkBox">
+            <property name="orientation">1</property>
+            <child>
+              <object class="GtkSeparator"></object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="halign">2</property>
+                <property name="margin-bottom">16</property>
+                <property name="margin-top">16</property>
+                <property name="margin-start">16</property>
+                <property name="margin-end">16</property>
+                <property name="spacing">16</property>
+                <child>
+                  <object class="GtkButton">
+                    <property name="label">Cancel</property>
+                    <signal name="clicked" handler="cancel_update"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="label">Update</property>
+                    <signal name="clicked" handler="update_row"/>
+                    <property name="sensitive" bind-source="TarugEditRowDialog" bind-property="has_changed" bind-flags="sync-create"/>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>

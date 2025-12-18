@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="custom">style-switcher</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_New Window</attribute>
+        <attribute name="action">app.new-window</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Back up database</attribute>
+        <attribute name="action">win.backup</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Restore database</attribute>
+        <attribute name="action">win.restore</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Import connections</attribute>
+        <attribute name="action">win.import</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Export connections</attribute>
+        <attribute name="action">win.export</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Preferences</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
+        <attribute name="action">win.show-help-overlay</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_About</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+  <template class="TarugConnectionView" parent="AdwBin">
+    <property name="hexpand">true</property>
+    <property name="vexpand">true</property>
+    <child>
+      <object class="GtkPaned" id="paned">
+        <property name="shrink-start-child">false</property>
+        <property name="shrink-end-child">false</property>
+        <child type="start">
+          <object class="GtkBox">
+            <property name="width-request">300</property>
+            <property name="orientation">1</property>
+            <property name="spacing">4</property>
+            <property name="margin-top">4</property>
+            <child>
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkLabel">
+                    <style>
+                      <class name="heading"/>
+                    </style>
+                    <property name="margin-top">6</property>
+                    <property name="margin-start">8</property>
+                    <property name="halign">3</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="label">Connections</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">4</property>
+                    <property name="hexpand">true</property>
+                    <property name="halign">2</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="tooltip-text">Add new connection</property>
+                        <style>
+                          <class name="flat"/>
+                        </style>
+                        <property name="icon-name">plus-large-symbolic</property>
+                        <signal name="clicked" handler="add_new_connection"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkListView" id="listview">
+                    <style>
+                      <class name="navigation-sidebar"/>
+                    </style>
+                    <property name="model">
+                      <object class="GtkSingleSelection" id="selection_model">
+                        <binding name="model">
+                          <lookup name="connections" type="TarugConnectionViewModel">
+                            <lookup name="viewmodel" type="TarugConnectionView">
+                              <constant>TarugConnectionView</constant>
+                            </lookup>
+                          </lookup>
+                        </binding>
+                        <property name="autoselect">true</property>
+                      </object>
+                    </property>
+                    <signal name="activate" handler="active_connection"/>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="resource">/io/github/ppvan/tarug/gtk/connection-listitem.ui</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child type="end">
+          <object class="AdwBin">
+            <property name="child">
+              <object class="GtkWindowHandle">
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">1</property>
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <child>
+                      <object class="AdwHeaderBar" id="header">
+                        <style>
+                          <class name="flat"/>
+                        </style>
+                        <child type="title">
+                          <object class="GtkLabel">
+                            <property name="label"></property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkMenuButton">
+                            <property name="icon-name">open-menu-symbolic</property>
+                            <property name="menu-model">primary_menu</property>
+                            <property name="popover">
+                              <object class="GtkPopoverMenu">
+                                <property name="menu-model">primary_menu</property>
+                                <child type="style-switcher">
+                                  <object class="TarugStyleSwitcher"></object>
+                                </child>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="valign">1</property>
+                        <property name="hexpand">true</property>
+                        <property name="vexpand">true</property>
+                        <property name="maximum-size">800</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">1</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <style>
+                                  <class name="connection-form"/>
+                                </style>
+                                <property name="spacing">4</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">20</property>
+                                    <property name="margin-bottom">60</property>
+                                    <style>
+                                      <class name="title-0"/>
+                                    </style>
+                                    <property name="label">Connect with Tarug</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="hexpand">true</property>
+                                    <property name="vexpand">true</property>
+                                    <property name="row-homogeneous">true</property>
+                                    <property name="row-spacing">8</property>
+                                    <property name="column-spacing">8</property>
+                                    <property name="margin-start">4</property>
+                                    <property name="margin-end">4</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="halign">2</property>
+                                        <property name="label">Name:</property>
+                                        <layout>
+                                          <property name="row">0</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="halign">2</property>
+                                        <property name="label">Host:</property>
+                                        <layout>
+                                          <property name="row">1</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="halign">2</property>
+                                        <property name="label">User:</property>
+                                        <layout>
+                                          <property name="row">2</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="halign">2</property>
+                                        <property name="label">Password:</property>
+                                        <layout>
+                                          <property name="row">3</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="halign">2</property>
+                                        <property name="label">Database:</property>
+                                        <layout>
+                                          <property name="row">4</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="name_entry">
+                                        <property name="placeholder-text">Connection name</property>
+                                        <property name="hexpand">true</property>
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">0</property>
+                                          <property name="column">3</property>
+                                          <property name="column-span">7</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="host_entry">
+                                        <property name="placeholder-text">Example: localhost</property>
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="column-span">5</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="label">Port</property>
+                                        <property name="halign">2</property>
+                                        <layout>
+                                          <property name="row">1</property>
+                                          <property name="column">8</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="port_entry">
+                                        <property name="placeholder-text">i.e 5432</property>
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">1</property>
+                                          <property name="column">9</property>
+                                          <property name="column-span">1</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="user_entry">
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">2</property>
+                                          <property name="column">3</property>
+                                          <property name="column-span">7</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkPasswordEntry" id="password_entry">
+                                        <property name="show-peek-icon">true</property>
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">3</property>
+                                          <property name="column">3</property>
+                                          <property name="column-span">7</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="database_entry">
+                                        <property name="placeholder-text">postgres</property>
+                                        <signal name="activate" handler="on_entry_activated"/>
+                                        <signal name="changed" handler="on_text_changed"/>
+                                        <layout>
+                                          <property name="row">4</property>
+                                          <property name="column">3</property>
+                                          <property name="column-span">7</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="label">SSL:</property>
+                                        <property name="halign">2</property>
+                                        <layout>
+                                          <property name="row">5</property>
+                                          <property name="column">0</property>
+                                          <property name="column-span">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">0</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="valign">3</property>
+                                            <property name="orientation">1</property>
+                                            <child>
+                                              <object class="GtkSwitch" id="ssl_switch">
+                                                <signal name="activate" handler="on_switch_changed"/>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <layout>
+                                          <property name="row">5</property>
+                                          <property name="column">3</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible" bind-source="ssl_switch" bind-property="active" bind-flags="sync-create"/>
+                                        <property name="orientation">1</property>
+                                        <child>
+                                          <object class="GtkEntry" id="cert_path">
+                                            <property name="editable">false</property>
+                                            <property name="can-focus">true</property>
+                                            <property name="placeholder-text">SSL certificate-path</property>
+                                            <property name="primary-icon-name">application-certificate-symbolic</property>
+                                            <property name="secondary-icon-name">filemanager-app-symbolic</property>
+                                            <signal name="icon-release" handler="on_cert_file_chooser"/>
+                                            <property name="secondary-icon-activatable">true</property>
+                                            <signal name="changed" handler="on_text_changed"/>
+                                            <signal name="activate" handler="on_cert_entry_activate"/>
+                                          </object>
+                                        </child>
+                                        <layout>
+                                          <property name="row">5</property>
+                                          <property name="column">4</property>
+                                          <property name="column-span">6</property>
+                                        </layout>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="margin-top">20</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="halign">2</property>
+                                <property name="vexpand">true</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="spacing">8</property>
+                                    <child>
+                                      <object class="GtkSpinner" id="spinner">
+                                        <binding name="spinning">
+                                          <lookup name="is_pending" type="TarugConnectionViewModel">
+                                            <lookup name="viewmodel" type="TarugConnectionView">
+                                              <constant>TarugConnectionView</constant>
+                                            </lookup>
+                                          </lookup>
+                                        </binding>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="connect_btn">
+                                        <style>
+                                          <class name="suggested-action"/>
+                                        </style>
+                                        <property name="label">Connect</property>
+                                        <signal name="clicked" handler="on_connect_clicked"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="TarugTableDataView" parent="GtkBox">
+    <property name="width-request">900</property>
+    <property name="height-request">600</property>
+    <property name="orientation">1</property>
+    <property name="spacing">4</property>
+    <property name="margin-top">8</property>
+    <property name="margin-bottom">8</property>
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">3</property>
+        <property name="orientation">1</property>
+        <child>
+          <object class="TarugWhereEntry"></object>
+        </child>
+        <child>
+          <object class="GtkSeparator"></object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="TarugQueryResults" id="query_results">
+        <binding name="current-relation">
+          <lookup name="current-relation" type="TarugTableDataViewModel">
+            <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+              <constant>TarugTableDataView</constant>
+            </lookup>
+          </lookup>
+        </binding>
+        <binding name="is-loading">
+          <lookup name="is-loading" type="TarugTableDataViewModel">
+            <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+              <constant>TarugTableDataView</constant>
+            </lookup>
+          </lookup>
+        </binding>
+        <binding name="err-msg">
+          <lookup name="err-msg" type="TarugTableDataViewModel">
+            <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+              <constant>TarugTableDataView</constant>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="show-loading">false</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">8</property>
+        <child>
+          <object class="GtkButton">
+            <property name="visible">false</property>
+            <style>
+              <class name="flat"/>
+            </style>
+            <property name="icon-name">plus-large-symbolic</property>
+            <property name="tooltip-text">Insert Row</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="reload">
+            <style>
+              <class name="flat"/>
+            </style>
+            <property name="icon-name">refresh-large-symbolic</property>
+            <property name="tooltip-text">Reload Data</property>
+            <signal name="clicked" handler="reload_data"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="status_label">
+            <binding name="label">
+              <lookup name="row-ranges" type="TarugTableDataViewModel">
+                <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+                  <constant>TarugTableDataView</constant>
+                </lookup>
+              </lookup>
+            </binding>
+            <property name="halign">1</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="left_page">
+            <style>
+              <class name="flat"/>
+            </style>
+            <binding name="sensitive">
+              <lookup name="has-pre-page" type="TarugTableDataViewModel">
+                <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+                  <constant>TarugTableDataView</constant>
+                </lookup>
+              </lookup>
+            </binding>
+            <property name="icon-name">left-large-symbolic</property>
+            <property name="tooltip-text">Last Page</property>
+            <signal name="clicked" handler="pre_page"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="right_page">
+            <style>
+              <class name="flat"/>
+            </style>
+            <binding name="sensitive">
+              <lookup name="has-next-page" type="TarugTableDataViewModel">
+                <lookup name="tabledata-viewmodel" type="TarugTableDataView">
+                  <constant>TarugTableDataView</constant>
+                </lookup>
+              </lookup>
+            </binding>
+            <property name="icon-name">right-large-symbolic</property>
+            <property name="tooltip-text">Next Page</property>
+            <signal name="clicked" handler="next_page"/>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

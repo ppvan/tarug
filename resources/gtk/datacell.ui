@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <menu id="menu">
+    <section>
+      <item>
+        <attribute name="icon">category-search-symbolic</attribute>
+        <attribute name="label" translatable="yes">_Copy Cell</attribute>
+        <attribute name="action">schema.copy</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Copy Row as CSV</attribute>
+        <attribute name="action">schema.row-copy</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Edit Row</attribute>
+        <attribute name="action">schema.edit</attribute>
+      </item>
+    </section>
+  </menu>
+  <template class="TarugDataCell" parent="AdwBin">
+    <child>
+      <object class="GtkBox">
+        <child>
+          <object class="GtkInscription" id="label">
+            <style>
+              <class name="table-cell"/>
+            </style>
+            <property name="text-overflow">3</property>
+            <property name="halign">1</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkPopoverMenu" id="popover">
+            <property name="menu-model">menu</property>
+            <property name="has-arrow">false</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkGestureClick">
+        <property name="button">3</property>
+        <signal name="released" handler="on_right_clicked"/>
+      </object>
+    </child>
+  </template>
+</interface>
