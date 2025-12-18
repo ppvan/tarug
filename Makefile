@@ -27,6 +27,7 @@ RUNNER_FLAGS := --with-appdir \
 				--env=AT_SPI_BUS_ADDRESS=unix:path=/run/flatpak/at-spi-bus \
 				--env=DESKTOP_SESSION=$(DESKTOP_SESSION) \
 				--env=LANG=$(LANG) \
+				--env=G_MESSAGES_DEBUG=Tarug \
 				--env=WAYLAND_DISPLAY=$(WAYLAND_DISPLAY) \
 				--env=XDG_CURRENT_DESKTOP=$(XDG_CURRENT_DESKTOP) \
 				--env=XDG_SESSION_DESKTOP=$(XDG_SESSION_DESKTOP) \
@@ -107,6 +108,9 @@ lsp:
 
 meson:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson
+
+shell:
+	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/bash
 
 test:
 	flatpak build $(RUNNER_FLAGS) $(REPO_DIR) /usr/bin/meson test -C $(BUILD_DIR)

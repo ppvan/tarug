@@ -1,12 +1,5 @@
 namespace Tarug {
     public class ConnectionViewModel : BaseViewModel {
-        public enum State {
-            IDLE,
-            CONNECTING,
-            ERROR
-        }
-
-
         uint timeout_id = 0;
         public ConnectionRepository repository { get; private set; }
         public SQLService sql_service { get; private set; }
@@ -14,15 +7,14 @@ namespace Tarug {
 
 
 
-        // States
-
-        public State current_state { get; private set; default = State.IDLE; }
-        public string err_msg { get; private set; default = "hello world"; }
+        // Props
+        public bool is_pending { get; private set; default = false;}
         public ObservableList<Connection> connections { get; private set; default = new ObservableList<Connection> (); }
         public Connection ? selected_connection { get; set; }
 
-        /** True when trying to establish a connection util know results. */
-        public bool is_connectting { get; set; default = false; }
+        // Signals
+        public signal void connect_database_failed(string error_message);
+
 
         public ConnectionViewModel(ConnectionRepository repository, SQLService sql_service, NavigationService navigation_service){
             base();
@@ -36,14 +28,6 @@ namespace Tarug {
             if (connections.empty()) {
                 // new_connection();
             }
-
-            this.bind_property("current-state", this, "is-connectting", SYNC_CREATE, from_state_to_connecting);
-
-            // Auto save data each 10 secs in case app crash.
-            // Timeout.add_seconds (10, () => {
-            // repository.save (connections.to_list ());
-            // return Source.CONTINUE;
-            // }, Priority.LOW);
         }
 
         public void new_connection (){
@@ -87,19 +71,20 @@ namespace Tarug {
         }
 
         public async void active_connection (Connection connection){
-            this.current_state = State.CONNECTING;
             try {
+                this.is_pending = true;
                 yield sql_service.connect_db (connection);
 
                 EventBus.instance().connection_active(connection);
             } catch (TarugError err) {
-                this.err_msg = err.message.dup();
                 debug("Error: %s", err.message);
-                this.current_state = State.ERROR;
+                this.connect_database_failed(err.message.dup ());
+                this.is_pending = false;
                 return;
             }
-            this.current_state = State.IDLE;
+            this.is_pending = false;
         }
+
 
         public List<Connection> export_connections (){
             return(repository.find_all());
@@ -115,17 +100,6 @@ namespace Tarug {
                 repository.save(connections.to_list());
                 return(Source.REMOVE);
             });
-        }
-
-        private bool from_state_to_connecting (Binding binding, Value from, ref Value to){
-            ConnectionViewModel.State state = (ConnectionViewModel.State) from.get_enum();
-            if (state == ConnectionViewModel.State.CONNECTING) {
-                to.set_boolean(true);
-            } else {
-                to.set_boolean(false);
-            }
-
-            return(true);
         }
     }
 }

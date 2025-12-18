@@ -57,7 +57,6 @@ namespace Tarug {
             var db_url = build_connection_string(conn);
             debug("Connecting to %s", db_url);
             start_connect (db_url);
-
             /*
              * Begin the polling loop to keep checking the connection is good
                Reference: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PQCONNECTSTARTPARAMS
@@ -122,12 +121,56 @@ namespace Tarug {
             }
         }
 
-        private string build_connection_string(Connection conn) {
+        private string build_connection_string(Connection conn) throws TarugError {
+
+            long port = long.parse (conn.port);
+            if (port == 0) {
+                throw new TarugError.CONNECTION_ERROR("Port `%s` must be a number".printf (conn.port));
+            } else if (port <= 0 || port >= 65535) {
+                throw new TarugError.CONNECTION_ERROR("Port `%ld` not in range [0-65535]".printf (port));
+            }
+
+            string user = conn.user.strip();
+            if (user == "") {
+                throw new TarugError.CONNECTION_ERROR("User must not be blank");
+            }
+
+
+            string password = conn.password.strip();
+            if (password == "") {
+                throw new TarugError.CONNECTION_ERROR("Password must not be blank");
+            }
+
+            string host = conn.host.strip();
+            if (host == "") {
+                throw new TarugError.CONNECTION_ERROR("Host must not be blank");
+            }
+
+            string dbname = conn.database.strip();
+            if (dbname == "") {
+                throw new TarugError.CONNECTION_ERROR("Database must not be blank");
+            }
+
             var connection_timeout = settings.get_int("connection-timeout");
             var query_timeout = settings.get_int("query-timeout");
-            string db_url = conn.connection_string(connection_timeout, query_timeout);
+            var options = @"\'-c statement_timeout=$(query_timeout * 1000)\'";
 
-            return db_url;
+            var builder = new StringBuilder("");
+            builder.append_printf ("user=%s ", user);
+            builder.append_printf ("password=%s ", password);
+            builder.append_printf ("sslmode=%s ", conn.use_ssl ? "verify-full" : "disable");
+            builder.append_printf ("host=%s ", host);
+            builder.append_printf ("port=%ld ", port);
+            builder.append_printf ("dbname=%s ", dbname);
+            builder.append_printf ("application_name=%s ", Config.APP_NAME);
+            builder.append_printf ("connect_timeout=%d ", connection_timeout);
+            builder.append_printf ("options=%s ", options);
+            if (conn.use_ssl) {
+                builder.append(@" sslrootcert=$(conn.cert_path)");
+            }
+
+
+            return(builder.free_and_steal());
         }
 
         public async Relation exec_query (Query query) throws TarugError {

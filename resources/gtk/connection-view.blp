@@ -126,16 +126,6 @@ template $TarugConnectionView: Adw.Bin {
             }
         }
 
-        // $TarugConnectionSidebar sidebar {
-        //   width-request: 300;
-        //   connections: bind template.viewmodel as <$TarugConnectionViewModel>.connections;
-        //   selected-connection: bind template.viewmodel as <$TarugConnectionViewModel>.selected-connection;
-        //   request-new-connection => $add_new_connection();
-        //   request_dup_connection => $dup_connection();
-        //   request_remove_connection => $remove_connection();
-        //   request_connect_database => $active_connection();
-        // }
-
         [end]
         Adw.Bin {
             child: WindowHandle {
@@ -279,7 +269,7 @@ template $TarugConnectionView: Adw.Bin {
                                     }
 
                                     Entry host_entry {
-                                        placeholder-text: "localhost";
+                                        placeholder-text: "Example: localhost";
                                         activate => $on_entry_activated();
                                         changed => $on_text_changed();
 
@@ -301,7 +291,7 @@ template $TarugConnectionView: Adw.Bin {
                                     }
 
                                     Entry port_entry {
-                                        placeholder-text: "5432";
+                                        placeholder-text: "i.e 5432";
                                         activate => $on_entry_activated();
                                         changed => $on_text_changed();
 
@@ -313,7 +303,6 @@ template $TarugConnectionView: Adw.Bin {
                                     }
 
                                     Entry user_entry {
-                                        placeholder-text: "postgres";
                                         activate => $on_entry_activated();
                                         changed => $on_text_changed();
 
@@ -325,7 +314,6 @@ template $TarugConnectionView: Adw.Bin {
                                     }
 
                                     PasswordEntry password_entry {
-                                        placeholder-text: "";
                                         show-peek-icon: true;
                                         activate => $on_entry_activated();
                                         changed => $on_text_changed();
@@ -413,7 +401,7 @@ template $TarugConnectionView: Adw.Bin {
                                     spacing: 8;
 
                                     Spinner spinner {
-                                        spinning: bind template.viewmodel as <$TarugConnectionViewModel>.is-connectting;
+                                        spinning: bind template.viewmodel as <$TarugConnectionViewModel>.is_pending;
                                     }
 
                                     Button connect_btn {
@@ -431,15 +419,5 @@ template $TarugConnectionView: Adw.Bin {
                 }
             };
         }
-
-        // $TarugConnectionForm form {
-        //     width-request: 800;
-        //     selected-connection: bind sidebar.selected-connection;
-        //     is-connectting: bind template.viewmodel as <$TarugConnectionViewModel>.is-connectting;
-        //     current-state: bind template.viewmodel as <$TarugConnectionViewModel>.current-state;
-        //     menu-model: primary_menu;
-        //     request-database => $active_connection ();
-        //     connections-changed => $save_connections ();
-        // }
     }
 }

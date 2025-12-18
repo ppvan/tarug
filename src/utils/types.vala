@@ -65,6 +65,16 @@ namespace Tarug {
         return result.error == null;
     }
 
+    public async void sleep(int milliseconds) {
+        Source source = new TimeoutSource (milliseconds);
+        source.set_callback (() => {
+            sleep.callback ();
+            return false; // run once
+        });
+        source.attach (MainContext.default ());
+        yield;
+    }
+
     public class Vec<T>: Object {
         static int DEFAULT_CAPACITY = 64;
 
