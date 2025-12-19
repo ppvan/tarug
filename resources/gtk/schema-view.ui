@@ -390,7 +390,6 @@
             <child type="end">
               <object class="GtkBox" id="main-view">
                 <property name="orientation">1</property>
-                <property name="width-request">920</property>
                 <child>
                   <object class="AdwHeaderBar">
                     <style>

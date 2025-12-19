@@ -3,8 +3,6 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <template class="TarugViewDataView" parent="GtkBox">
-    <property name="width-request">900</property>
-    <property name="height-request">600</property>
     <property name="orientation">1</property>
     <property name="spacing">4</property>
     <property name="margin-start">8</property>

@@ -123,17 +123,6 @@ namespace Tarug {
             }
         }
 
-        public void on_something (){
-            debug("Dark: %b", style_manager.dark);
-            if (style_manager.dark) {
-                style_manager.color_scheme = Adw.ColorScheme.FORCE_LIGHT;
-            } else {
-                style_manager.color_scheme = Adw.ColorScheme.FORCE_DARK;
-            }
-
-            // style_manager.dark = !style_manager.dark;
-        }
-
         public static int main (string[] args){
             ensure_types();
             var app = new Tarug.Application();

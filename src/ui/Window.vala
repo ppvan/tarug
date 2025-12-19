@@ -55,8 +55,6 @@ namespace Tarug {
             this.query_viewmodel = autowire<QueryViewModel> ();
             this.settings = autowire<Settings> ();
             this.backup_service = autowire<BackupService>();
-            settings.bind("window-width", this, "default-width", SettingsBindFlags.DEFAULT);
-            settings.bind("window-height", this, "default-height", SettingsBindFlags.DEFAULT);
             this.add_action_entries(ACTIONS, this);
         }
 
