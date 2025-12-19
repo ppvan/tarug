@@ -52,13 +52,12 @@ namespace Tarug {
 
         /**
          * Make a async Postgres connection.
-        */
-        public async void connect_db (Connection conn) throws TarugError {
-            var db_url = build_connection_string(conn);
-            debug("Connecting to %s", db_url);
-            start_connect (db_url);
+         */
+        public async void connect_db (Connection conn) throws TarugError, IOError {
+            start_connect(conn);
+            //  throw_err_if_cancel(cancellable);
             /*
-             * Begin the polling loop to keep checking the connection is good
+             * Begin the polling loop to connect postgres in async manner using gio.
                Reference: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PQCONNECTSTARTPARAMS
                Setup: last_poll is WRITE
                Switch:
@@ -72,62 +71,76 @@ namespace Tarug {
                     Case Sucess: Break the loop (success).
              */
             var last_poll = Postgres.PollingStatus.WRITING;
-            var fd = active_db.get_socket ();
-            SourceFunc go_to_yield = connect_db.callback;
-            while (true) {
-                if (last_poll == Postgres.PollingStatus.WRITING) {
-                    var channel = new IOChannel.unix_new(fd);
-                    channel.add_watch(IOCondition.OUT, (source, condition) => {
-                        last_poll = active_db.connect_poll ();
-                        fd = active_db.get_socket ();
-                        go_to_yield();
+            var fd = active_db.get_socket();
+            var channel = new IOChannel.unix_new(fd);
 
+            SourceFunc go_to_yield = connect_db.callback;
+
+
+            while (true) {
+                //  throw_err_if_cancel(cancellable);
+                if (last_poll == Postgres.PollingStatus.WRITING) {
+                    channel.add_watch(IOCondition.OUT, (source, condition) => {
+                        go_to_yield();
                         return false;
                     });
                 } else if (last_poll == Postgres.PollingStatus.READING) {
-                    var channel = new IOChannel.unix_new(fd);
                     channel.add_watch(IOCondition.IN, (source, condition) => {
-                        last_poll = active_db.connect_poll ();
-                        fd = active_db.get_socket ();
                         go_to_yield();
-
                         return false;
                     });
                 } else if (last_poll == Postgres.PollingStatus.FAILED) {
                     var err_msg = active_db.get_error_message();
                     throw new TarugError.CONNECTION_ERROR(err_msg);
                 } else {
-                    active_db = (owned)active_db;
-                    active_chanel = new IOChannel.unix_new (active_db.get_socket ());
-                    active_chanel.add_watch (IOCondition.IN | IOCondition.HUP, channel_signal_handler);
+                    active_db = (owned) active_db;
+                    active_chanel = new IOChannel.unix_new(active_db.get_socket());
+                    active_chanel.add_watch(IOCondition.IN | IOCondition.HUP, channel_signal_handler);
                     break;
                 }
-                yield; // give up cpu control
+
+                yield; // <--- go_to_yield() will jump here
+
+                // Update socket descriptors when socket is ready to write
+                last_poll = active_db.connect_poll();
+                fd = active_db.get_socket();
+                channel = new IOChannel.unix_new(fd);
+
+                // Prevent 100% CPU
+                yield sleep (50);
             }
         }
 
-        public void close_db() {
+        private void throw_err_if_cancel (Cancellable ? cancellable) throws IOError {
+            if (cancellable != null && cancellable.is_cancelled()) {
+                throw new IOError.CANCELLED("Connection cancelled");
+            }
+        }
+
+        public void close_db (){
             this.active_db = null;
             this.active_chanel = null;
             this.active_result = null;
         }
 
-        private void start_connect(string db_url) throws TarugError {
-            active_db = Postgres.connect_start (db_url);
-            var status = active_db.get_status ();
+        private void start_connect (Connection conn) throws TarugError {
+            var db_url = build_connection_string(conn);
+            debug("Connecting to %s", db_url);
+            active_db = Postgres.connect_start(db_url);
+            var status = active_db.get_status();
             if (status == Postgres.ConnectionStatus.BAD) {
                 var err_msg = active_db.get_error_message();
                 throw new TarugError.CONNECTION_ERROR(err_msg);
             }
         }
 
-        private string build_connection_string(Connection conn) throws TarugError {
+        private string build_connection_string (Connection conn) throws TarugError {
 
-            long port = long.parse (conn.port);
+            long port = long.parse(conn.port);
             if (port == 0) {
-                throw new TarugError.CONNECTION_ERROR("Port `%s` must be a number".printf (conn.port));
+                throw new TarugError.CONNECTION_ERROR("Port `%s` must be a number".printf(conn.port));
             } else if (port <= 0 || port >= 65535) {
-                throw new TarugError.CONNECTION_ERROR("Port `%ld` not in range [0-65535]".printf (port));
+                throw new TarugError.CONNECTION_ERROR("Port `%ld` not in range [0-65535]".printf(port));
             }
 
             string user = conn.user.strip();
@@ -156,15 +169,15 @@ namespace Tarug {
             var options = @"\'-c statement_timeout=$(query_timeout * 1000)\'";
 
             var builder = new StringBuilder("");
-            builder.append_printf ("user=%s ", user);
-            builder.append_printf ("password=%s ", password);
-            builder.append_printf ("sslmode=%s ", conn.use_ssl ? "verify-full" : "disable");
-            builder.append_printf ("host=%s ", host);
-            builder.append_printf ("port=%ld ", port);
-            builder.append_printf ("dbname=%s ", dbname);
-            builder.append_printf ("application_name=%s ", Config.APP_NAME);
-            builder.append_printf ("connect_timeout=%d ", connection_timeout);
-            builder.append_printf ("options=%s ", options);
+            builder.append_printf("user=%s ", user);
+            builder.append_printf("password=%s ", password);
+            builder.append_printf("sslmode=%s ", conn.use_ssl ? "verify-full" : "disable");
+            builder.append_printf("host=%s ", host);
+            builder.append_printf("port=%ld ", port);
+            builder.append_printf("dbname=%s ", dbname);
+            builder.append_printf("application_name=%s ", Config.APP_NAME);
+            builder.append_printf("connect_timeout=%d ", connection_timeout);
+            builder.append_printf("options=%s ", options);
             if (conn.use_ssl) {
                 builder.append(@" sslrootcert=$(conn.cert_path)");
             }
@@ -175,6 +188,7 @@ namespace Tarug {
 
         public async Relation exec_query (Query query) throws TarugError {
             var result = yield exec_query_epoll (query.sql);
+
             check_query_status(result);
             return new Relation((owned) result);
         }
@@ -186,6 +200,7 @@ namespace Tarug {
 
         public async Relation exec_query_params (Query query) throws TarugError {
             var result = yield exec_query_params_internal (query.sql, query.params);
+
             // check query status
             check_query_status(result);
 
@@ -198,10 +213,10 @@ namespace Tarug {
             var status = result.get_status();
 
             switch (status) {
-                case ExecStatus.TUPLES_OK, ExecStatus.COMMAND_OK, ExecStatus.COPY_OUT:
+                case ExecStatus.TUPLES_OK, ExecStatus.COMMAND_OK, ExecStatus.COPY_OUT :
                     break;
 
-                case ExecStatus.FATAL_ERROR:
+                case ExecStatus.FATAL_ERROR :
                     var err_msg = result.get_error_message();
                     debug("Fatal error: %s", err_msg);
                     throw new TarugError.QUERY_FAIL(err_msg.dup());
@@ -219,40 +234,40 @@ namespace Tarug {
         private async Result exec_query_epoll (string query){
             debug("Exec: %s", query);
             result_handler = exec_query_epoll.callback;
-            int status = active_db.send_query (query);
+            int status = active_db.send_query(query);
             if (status != 1) {
-                debug("%s", active_db.get_error_message ());
+                debug("%s", active_db.get_error_message());
             }
             yield;
             result_handler = null;
 
-            return (owned)active_result;
+            return (owned) active_result;
         }
 
         private async Result exec_query_params_internal (string query, Vec<string> params) throws TarugError {
             debug("Exec Param: %s", query);
             result_handler = exec_query_params_internal.callback;
-            int status = active_db.send_query_params (query, (int) params.length, null, params.as_array(), null, null, 0);
+            int status = active_db.send_query_params(query, (int) params.length, null, params.as_array(), null, null, 0);
             if (status != 1) {
-                debug("%s", active_db.get_error_message ());
+                debug("%s", active_db.get_error_message());
             }
-            
+
             yield;
             result_handler = null;
-            return (owned)active_result;
+            return (owned) active_result;
         }
 
-        private bool channel_signal_handler(IOChannel source, IOCondition condition) {
+        private bool channel_signal_handler (IOChannel source, IOCondition condition){
             if (condition == IOCondition.HUP) {
                 return false;
             }
             int status_code = active_db.consume_input();
 
             if (status_code == 1) {
-                if (active_db.is_busy () == 0) {
+                if (active_db.is_busy() == 0) {
                     active_result = active_db.get_result();
-                    while(active_db.get_result() != null) {
-                        //  TODO: handle muplite result.
+                    while (active_db.get_result() != null) {
+                        // TODO: handle muplite result.
                     }
                     result_handler();
                 }
@@ -260,10 +275,9 @@ namespace Tarug {
             return true;
         }
 
-
         private Result active_result;
         private Database active_db;
         private IOChannel active_chanel;
-        private SourceFunc? result_handler;
+        private SourceFunc ? result_handler;
     }
 }

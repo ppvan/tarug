@@ -4,13 +4,11 @@ namespace Tarug {
         public ConnectionRepository repository { get; private set; }
         public SQLService sql_service { get; private set; }
         public NavigationService navigation_service { get; private set; }
-
-
-
         // Props
         public bool is_pending { get; private set; default = false;}
         public ObservableList<Connection> connections { get; private set; default = new ObservableList<Connection> (); }
         public Connection ? selected_connection { get; set; }
+
 
         // Signals
         public signal void connect_database_failed(string error_message);
@@ -79,10 +77,9 @@ namespace Tarug {
             } catch (TarugError err) {
                 debug("Error: %s", err.message);
                 this.connect_database_failed(err.message.dup ());
+            } finally {
                 this.is_pending = false;
-                return;
             }
-            this.is_pending = false;
         }
 
 

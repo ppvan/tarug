@@ -60,18 +60,28 @@ namespace Tarug {
         return local_time;
     }
 
-    public bool is_sql_query(string input) {
+    public bool is_sql_query (string input){
         var result = PgQuery.parse(input);
         return result.error == null;
     }
 
-    public async void sleep(int milliseconds) {
-        Source source = new TimeoutSource (milliseconds);
-        source.set_callback (() => {
-            sleep.callback ();
+    public async void sleep (int milliseconds){
+        Source source = new TimeoutSource(milliseconds);
+        source.set_callback(() => {
+            sleep.callback();
             return false; // run once
         });
-        source.attach (MainContext.default ());
+        source.attach(MainContext.default());
+        yield;
+    }
+
+    public async void wait_socket (Socket socket, IOCondition condition){
+        var source = socket.create_source(condition, null);
+        source.set_callback(() => {
+            wait_socket.callback();
+            return false;
+        });
+        source.attach(MainContext.default());
         yield;
     }
 
